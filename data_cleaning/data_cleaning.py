@@ -54,6 +54,8 @@ def clean_data(file = None):
 
     #Add a column for the total salary cap in a contract's year signed
     df['signing_year_cap'] = df['signing_year'].apply(lambda x: scap[x])
+    # and a column for the percentage of the cap in the year signed
+    df['cap_pct'] = round(100 * df.cap_hit / df.signing_year_cap, 2)
 
     #convert birthdate to pandas datetime
     df.birthdate = pd.to_datetime(df.birthdate)
@@ -67,4 +69,25 @@ def clean_data(file = None):
     df.season = df.season.apply(lambda x: int(x[:4]))
     df.contract_end = df.contract_end.apply(lambda x: int(x[:4]))
 
-return df
+    #Drop some non-standard situations (i.e. suspensions, season-opening IR,
+    # salary retention adjustments)
+    df.drop(df[df.first_name.map(len) > 15].index, inplace=True)
+
+    #Drop one extremely young player
+    df.drop(df[df.ufa_year > 2030].index, inplace = True)
+
+    #Drop where ufa_year is null
+    df.drop(df[df.ufa_year.isnull()].index, inplace=True)
+    #Turn the remaining ufa years into integers
+    df.ufa_year = df.ufa_year.apply(int)
+
+    #Drop any contracts less than league minimum in 2009
+    df.drop(df[df.cap_hit < 500000].index, inplace=True)
+
+    #Replace the position names for two players whose positions don't match the rest
+    df.replace(['RW', 'LW'], ['Right Wing', 'Left Wing'], inplace=True)
+
+    #drop entry level contracts
+    df.drop(df[df.contract_level == 'entry_level'].index, inplace=True)
+
+    return df
