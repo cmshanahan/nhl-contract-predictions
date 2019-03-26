@@ -1,0 +1,16 @@
+CREATE TABLE contracts (
+contract_id INTEGER PRIMARY KEY,
+player_id INTEGER,
+Player VARCHAR(50),
+position VARCHAR(50),
+length INTEGER,
+cap_hit INTEGER,
+total_value INTEGER,
+cap_pct FLOAT(2),
+signing_date DATE,
+signing_year INTEGER,
+signing_age INTEGER,
+signing_team VARCHAR(50),
+expiry_status CHAR(3),
+signing_status CHAR(3) 
+);

@@ -17,13 +17,17 @@ def clean_data(file = None):
     df['total_value'] = df[' Total Value ']
     df.drop(' Total Value ', axis=1, inplace=True)
 
+    #create a column for full player name
+    df['Player'] = df['first_name'] + ' ' + df['last_name']
+
     #make a function to convert money strings to ints and apply
     money_to_int = lambda x: int(x.strip().strip('$()').replace(',', ''))
     df['cap_hit'] = df['cap_hit'].apply(money_to_int)
     df['total_value'] = df['total_value'].apply(money_to_int)
 
-    #convert signing date to datetime format and pull out the signing year
+    #convert signing date to date format and pull out the signing year
     df.signing_date = pd.to_datetime(df.signing_date)
+    dff['signing_date'] = pd.DatetimeIndex(dff['signing_date']).date
     df['signing_year'] = pd.DatetimeIndex(df.signing_date).year
 
     #remove row that had NaN for signing year (Defenseman Fyodor Tyutin had
@@ -90,4 +94,16 @@ def clean_data(file = None):
     #drop entry level contracts
     df.drop(df[df.contract_level == 'entry_level'].index, inplace=True)
 
+    #Add a column for whether the contract was signed as UFA or RFA
+    dff['signing_status'] = dff['signing_year'] >= dff['ufa_year']
+    dff['signing_status'] = dff['signing_status'].apply(ufa_check)
+
+
     return df
+
+#auxillary function to check if contract was signed as UFA or RFA
+def ufa_check(x):
+    if x == True:
+        return 'UFA'
+    else:
+        return 'RFA'
