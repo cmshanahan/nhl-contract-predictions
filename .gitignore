@@ -1,5 +1,6 @@
 data/Contract_Details_PuckPedia_Mar_2019_Confidential.csv
 data/test.csv
+data
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
