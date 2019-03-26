@@ -11,6 +11,6 @@ signing_date DATE,
 signing_year INTEGER,
 signing_age INTEGER,
 signing_team VARCHAR(50),
-expiry_status CHAR(3),
-signing_status CHAR(3) 
+expiry_status VARCHAR(50),
+signing_status CHAR(3)
 );
