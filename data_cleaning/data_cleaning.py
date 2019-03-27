@@ -27,7 +27,7 @@ def clean_data(file = None):
 
     #convert signing date to date format and pull out the signing year
     df.signing_date = pd.to_datetime(df.signing_date)
-    dff['signing_date'] = pd.DatetimeIndex(dff['signing_date']).date
+    df['signing_date'] = pd.DatetimeIndex(df['signing_date']).date
     df['signing_year'] = pd.DatetimeIndex(df.signing_date).year
 
     #remove row that had NaN for signing year (Defenseman Fyodor Tyutin had
