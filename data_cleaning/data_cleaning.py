@@ -14,8 +14,8 @@ def clean_data(file = None):
             'total_salary'], axis=1, inplace=True)
 
     #rename Total Value column to a format I prefer
-    df['total_value'] = df[' Total Value ']
-    df.drop(' Total Value ', axis=1, inplace=True)
+    df['total_value'] = df[' value ']
+    df.drop(' value ', axis=1, inplace=True)
 
     #create a column for full player name
     df['Player'] = df['first_name'] + ' ' + df['last_name']
