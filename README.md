@@ -13,3 +13,8 @@ I got an extremely dumb linear regression model based solely on age and player p
 Now I need to work on a way to combine the rest of my features and my targets.
 
 Day 3 (or How I learned to stop worrying and love Luongo):
+I think the best route for me to go is to implement sklearn's Pipeline somehow. I will also need to have some sort of pandas rolling window setup. I hav ebase data for every player / season combo, and for some of the relative stats I have 3 year windows already setup. A lot of the players in my stats data aren't going to show up anywhere in my contracts data.
+I want to use previous contract salary as a feature. If a player has no previous contracts in the data, then assume he was on an ELC (I'm not going to be predicting ELCs.) Median ELC cap_hit in the dataset is $792,500.
+I think we'll ignore total career stats for now as the data I have only goes back to 2007 and that won't cover everyone's entire career.
+-- Maybe what I'm really after is a radiusneighborsregressor not kNNregressor
+Hey I got df.rolling to work!
