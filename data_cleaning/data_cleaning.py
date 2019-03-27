@@ -14,8 +14,8 @@ def clean_data(file = None):
             'total_salary'], axis=1, inplace=True)
 
     #rename Total Value column to a format I prefer
-    df['total_value'] = df[' value ']
-    df.drop(' value ', axis=1, inplace=True)
+    df['total_value'] = df[' Total Value ']
+    df.drop(' Total Value ', axis=1, inplace=True)
 
     #create a column for full player name
     df['Player'] = df['first_name'] + ' ' + df['last_name']
@@ -25,10 +25,17 @@ def clean_data(file = None):
     df['cap_hit'] = df['cap_hit'].apply(money_to_int)
     df['total_value'] = df['total_value'].apply(money_to_int)
 
-    #convert signing date to date format and pull out the signing year
+    #convert signing date and birthdate to date format and pull out the signing year
     df.signing_date = pd.to_datetime(df.signing_date)
-    df['signing_date'] = pd.DatetimeIndex(df['signing_date']).date
+    df.birthdate = pd.to_datetime(df.birthdate)
     df['signing_year'] = pd.DatetimeIndex(df.signing_date).year
+
+    #get age at contract signing_date (not accounting for leap days)
+    df['signing_age'] = df.signing_date - df.birthdate
+    df.signing_age = df.signing_age.apply(lambda x: x.days // 365)
+
+    #convert signing_date to a date instead of a datetime
+    df['signing_date'] = pd.DatetimeIndex(df['signing_date']).date
 
     #remove row that had NaN for signing year (Defenseman Fyodor Tyutin had
     #the contract listed in other rows also so no data is lost
@@ -64,10 +71,6 @@ def clean_data(file = None):
     #convert birthdate to pandas datetime
     df.birthdate = pd.to_datetime(df.birthdate)
 
-    #get age at contract signing_date (not accounting for leap days)
-    df['signing_age'] = df.signing_date - df.birthdate
-    df.signing_age = df.signing_age.apply(lambda x: x.days // 365)
-
     #convert current season and contract_end to single year ints for ease of
     #calculations
     df.season = df.season.apply(lambda x: int(x[:4]))
@@ -95,8 +98,8 @@ def clean_data(file = None):
     df.drop(df[df.contract_level == 'entry_level'].index, inplace=True)
 
     #Add a column for whether the contract was signed as UFA or RFA
-    dff['signing_status'] = dff['signing_year'] >= dff['ufa_year']
-    dff['signing_status'] = dff['signing_status'].apply(ufa_check)
+    df['signing_status'] = df['signing_year'] >= df['ufa_year']
+    df['signing_status'] = df['signing_status'].apply(ufa_check)
 
 
     return df
