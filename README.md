@@ -21,3 +21,4 @@ Hey I got df.rolling to work!
 
 Day 4:
 Merged the tables together! I now have a row for every player's contract, with their stats for the year prior to signing and the 3 year window before it in the same row.
+I'm having some problems with players missing seasons creating NaNs in my merge. 300 rows affected, I'll come up with a fix later, but for now I've dropped them. Ran a basic linear model on signing age, position (F or D), points in last season, mean points in last 3 seasons, sum TOI over 3 seasons. RMSE is 1.38% of cap_pct.
