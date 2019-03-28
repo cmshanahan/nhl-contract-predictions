@@ -24,4 +24,10 @@ Merged the tables together! I now have a row for every player's contract, with t
 I'm having some problems with players missing seasons creating NaNs in my merge. 300 rows affected, I'll come up with a fix later, but for now I've dropped them. Ran a basic linear model on signing age, position (F or D), points in last season, mean points in last 3 seasons, sum TOI over 3 seasons. RMSE is 1.38% of cap_pct.
 On running the same model for both cap_pct and cap_hit (including signing_year_cap as a feature) apparently it predicts cap_hit better than cap_pct. I wonder if this means cap_pct isn't staying consistent, or maybe because the vast majority of the contracts are only over a small time window.
 Random Forest Regressor has a RMSE of ~$750,000.
-RadiusNeighborsRegressor w/ radius = 0.67 (using sklearn's StandardScaler), gives a RMSE of $665,000.
+RadiusNeighborsRegressor w/ radius = 0.67 (using sklearn's StandardScaler), gives a RMSE of $665,000. -> Also RMSE of 0.88% for cap_pct.
+I should run Grid Search on RNR.
+If I drop radius to 0.25, the RMSE drops to $43,000, but I don't know if I trust that result.
+In fact, when I remove the constant random state from my train test split, a lot of my answers seem to end up all over the place (mostly at lower radii). A radius of ~2/3 might be the sweet spot where it stays relatively consistent
+I think I need to run some Ridge or Lasso regression to help w/ feature selection. I also want to keep forward / defense models separate.
+Even more than that... I should try and get around to that player clustering I was thinking about and implement different models for each cluster.
+Radius Neighbors Regressor gives inconsistent results between uniform weights and distance weights.
