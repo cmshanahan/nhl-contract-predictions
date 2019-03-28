@@ -18,3 +18,6 @@ I want to use previous contract salary as a feature. If a player has no previous
 I think we'll ignore total career stats for now as the data I have only goes back to 2007 and that won't cover everyone's entire career.
 -- Maybe what I'm really after is a radiusneighborsregressor not kNNregressor
 Hey I got df.rolling to work!
+
+Day 4:
+Merged the tables together! I now have a row for every player's contract, with their stats for the year prior to signing and the 3 year window before it in the same row.
