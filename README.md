@@ -23,3 +23,5 @@ Day 4:
 Merged the tables together! I now have a row for every player's contract, with their stats for the year prior to signing and the 3 year window before it in the same row.
 I'm having some problems with players missing seasons creating NaNs in my merge. 300 rows affected, I'll come up with a fix later, but for now I've dropped them. Ran a basic linear model on signing age, position (F or D), points in last season, mean points in last 3 seasons, sum TOI over 3 seasons. RMSE is 1.38% of cap_pct.
 On running the same model for both cap_pct and cap_hit (including signing_year_cap as a feature) apparently it predicts cap_hit better than cap_pct. I wonder if this means cap_pct isn't staying consistent, or maybe because the vast majority of the contracts are only over a small time window.
+Random Forest Regressor has a RMSE of ~$750,000.
+RadiusNeighborsRegressor w/ radius = 0.67 (using sklearn's StandardScaler), gives a RMSE of $665,000.
