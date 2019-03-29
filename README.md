@@ -40,22 +40,22 @@ Moses recommends 'Leave One Out' cross validation.
 Now that we have clusters we can do some semi-supervised learning  
 
 Pre-clustering:  
-*RMSE for predicting all means: $1941304.0  
-[(Mean cap_hit for all players: $1959059.0, Median: $900000.0),  
-*RMSE for predicting all medians: $2211395.0    
+* RMSE for predicting all means: $1941304.0  
+ [(Mean cap_hit for all players: $1959059.0, Median: $900000.0),  
+* RMSE for predicting all medians: $2211395.0    
 
 Post-clustering:  
-*RMSE for forwards cluster 0 mean: $282063.0  
-*Mean cap hit for forwards cluster 0: $743504  
-*RMSE for forwards cluster 1 mean: $2128344.0  
-*Mean cap hit for forwards cluster 1: $4949133  
-*RMSE for forwards cluster 2 mean: $954985.0  
-*Mean cap hit for forwards cluster 2: $1312304  
-*RMSE for forwards cluster 3 mean: $1095837.0  
-*Mean cap hit for forwards cluster 3: $1582118  
-*RMSE for defense cluster 0 mean: $590399.0  
-*Mean cap hit for defense cluster 0: $911904  
-*RMSE for defense cluster 1 mean: $1533417.0  
-*Mean cap hit for defense cluster 1: $2042935  
-*RMSE for defense cluster 2 mean: $1911022.0  
-*Mean cap hit for defense cluster 2: $5075623  
+* RMSE for forwards cluster 0 mean: $282063.0  
+ Mean cap hit for forwards cluster 0: $743504  
+* RMSE for forwards cluster 1 mean: $2128344.0  
+ Mean cap hit for forwards cluster 1: $4949133  
+* RMSE for forwards cluster 2 mean: $954985.0  
+ Mean cap hit for forwards cluster 2: $1312304  
+* RMSE for forwards cluster 3 mean: $1095837.0  
+ Mean cap hit for forwards cluster 3: $1582118  
+* RMSE for defense cluster 0 mean: $590399.0  
+ Mean cap hit for defense cluster 0: $911904  
+* RMSE for defense cluster 1 mean: $1533417.0  
+ Mean cap hit for defense cluster 1: $2042935  
+* RMSE for defense cluster 2 mean: $1911022.0  
+ Mean cap hit for defense cluster 2: $5075623  
