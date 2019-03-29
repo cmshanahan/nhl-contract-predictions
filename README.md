@@ -29,5 +29,33 @@ I should run Grid Search on RNR.
 If I drop radius to 0.25, the RMSE drops to $43,000, but I don't know if I trust that result.
 In fact, when I remove the constant random state from my train test split, a lot of my answers seem to end up all over the place (mostly at lower radii). A radius of ~2/3 might be the sweet spot where it stays relatively consistent
 I think I need to run some Ridge or Lasso regression to help w/ feature selection. I also want to keep forward / defense models separate.
-Even more than that... I should try and get around to that player clustering I was thinking about and implement different models for each cluster.
+Even more than that... I should try and get around to that player clustering I was thinking about and implement different models for each cluster. Different players play different roles that are (one would assume) all valuable in their own way.  
 Radius Neighbors Regressor gives inconsistent results between uniform weights and distance weights.
+
+
+Day 5:
+I NEED A BENCHMARK!
+Ran some kMeans clustering. After checking elbow plots and iterating a few times, I've decided on k = 3 for Defense and k = 4 for Forwards. I originally wanted k = 5 for forwards, but one of the clusters kept having a size of only 3 or 4 players.
+Moses recommends 'Leave One Out' cross validation.
+Now that we have clusters we can do some semi-supervised learning  
+
+Pre-clustering:  
+*RMSE for predicting all means: $1941304.0  
+[(Mean cap_hit for all players: $1959059.0, Median: $900000.0),
+*RMSE for predicting all medians: $2211395.0  
+
+Post-clustering:  
+*RMSE for forwards cluster 0 mean: $282063.0
+*Mean cap hit for forwards cluster 0: $743504
+*RMSE for forwards cluster 1 mean: $2128344.0
+*Mean cap hit for forwards cluster 1: $4949133
+*RMSE for forwards cluster 2 mean: $954985.0
+*Mean cap hit for forwards cluster 2: $1312304
+*RMSE for forwards cluster 3 mean: $1095837.0
+*Mean cap hit for forwards cluster 3: $1582118
+*RMSE for defense cluster 0 mean: $590399.0
+*Mean cap hit for defense cluster 0: $911904
+*RMSE for defense cluster 1 mean: $1533417.0
+*Mean cap hit for defense cluster 1: $2042935
+*RMSE for defense cluster 2 mean: $1911022.0
+*Mean cap hit for defense cluster 2: $5075623
