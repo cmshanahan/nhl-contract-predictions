@@ -2,24 +2,24 @@
 Predict NHL player contract terms - Galvanize Data Science Immersive Capstone Project
 
 
-# Day 1:  
+## Day 1:  
 Cleaned contract data obtained via excel sheet from PuckPedia.
 Made assumption of $83 million salary cap for 2019 season based on Sportsnet article
 
-# Day 2:  
+## Day 2:  
 Forget everything else you were going to use for stats sources, just use Natural Stat Trick! They provide CSVs!
 For now I'm going to limit stats to 'All Situations' for simplicity. Next steps will hopefully involve adding power play / penalty kill.
 I got an extremely dumb linear regression model based solely on age and player position. The root mean squared error (RMSE) was 3%, which is also what the standard deviation of my test set was, so yeah, not a great model. But it's something.
 Now I need to work on a way to combine the rest of my features and my targets.
 
-# Day 3 (or How I learned to stop worrying and love Luongo):  
+## Day 3 (or How I learned to stop worrying and love Luongo):  
 I think the best route for me to go is to implement sklearn's Pipeline somehow. I will also need to have some sort of pandas rolling window setup. I have base data for every player / season combo, and for some of the relative stats I have 3 year windows already setup. A lot of the players in my stats data aren't going to show up anywhere in my contracts data.
 I want to use previous contract salary as a feature. If a player has no previous contracts in the data, then assume he was on an ELC (I'm not going to be predicting ELCs.) Median ELC cap_hit in the dataset is $792,500.
 I think we'll ignore total career stats for now as the data I have only goes back to 2007 and that won't cover everyone's entire career.
 -- Maybe what I'm really after is a RadiusNeighborsRegressor not kNNregressor
 Hey I got df.rolling to work!
 
-# Day 4:  
+## Day 4:  
 Merged the tables together! I now have a row for every player's contract, with their stats for the year prior to signing and the 3 year window before it in the same row.
 I'm having some problems with players missing seasons creating NaNs in my merge. 300 rows affected, I'll come up with a fix later, but for now I've dropped them. Ran a basic linear model on signing age, position (F or D), points in last season, mean points in last 3 seasons, sum TOI over 3 seasons. RMSE is 1.38% of cap_pct.
 On running the same model for both cap_pct and cap_hit (including signing_year_cap as a feature) apparently it predicts cap_hit better than cap_pct. I wonder if this means cap_pct isn't staying consistent, or maybe because the vast majority of the contracts are only over a small time window.
@@ -33,18 +33,18 @@ Even more than that... I should try and get around to that player clustering I w
 Radius Neighbors Regressor gives inconsistent results between uniform weights and distance weights.
 
 
-# Day 5:  
+## Day 5:  
 I NEED A BENCHMARK!
 Ran some kMeans clustering. After checking elbow plots and iterating a few times, I've decided on k = 3 for Defense and k = 4 for Forwards. I originally wanted k = 5 for forwards, but one of the clusters kept having a size of only 3 or 4 players.
 Moses recommends 'Leave One Out' cross validation.
 Now that we have clusters we can do some semi-supervised learning  
 
-Pre-clustering:  
+#### Pre-clustering:  
 * RMSE for predicting all means: $1941304.0  
  [(Mean cap_hit for all players: $1959059.0, Median: $900000.0),  
 * RMSE for predicting all medians: $2211395.0    
 
-Post-clustering:  
+#### Post-clustering:  
 * RMSE for forwards cluster 0 mean: $282063.0  
  Mean cap hit for forwards cluster 0: $743504  
 * RMSE for forwards cluster 1 mean: $2128344.0  
@@ -59,3 +59,11 @@ Post-clustering:
  Mean cap hit for defense cluster 1: $2042935  
 * RMSE for defense cluster 2 mean: $1911022.0  
  Mean cap hit for defense cluster 2: $5075623  
+
+### First attempt at separate models for each cluster  
+* Overall RMSE for Random Forest is: $876793.27  
+* Overall RMSE for k Nearest Neighbors is: $882156.28  
+* Overall RMSE for Radius Neighbors is: $nan  
+* Overall RMSE for Linear Regression is: $854703.2  
+* Overall RMSE for AdaBoost is: $931105.85  
+* Overall RMSE for Gradient Boost is: $899509.64  
