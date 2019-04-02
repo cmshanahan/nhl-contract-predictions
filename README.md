@@ -30,7 +30,7 @@ If I drop radius to 0.25, the RMSE drops to $43,000, but I don't know if I trust
 In fact, when I remove the constant random state from my train test split, a lot of my answers seem to end up all over the place (mostly at lower radii). A radius of ~2/3 might be the sweet spot where it stays relatively consistent
 I think I need to run some Ridge or Lasso regression to help w/ feature selection. I also want to keep forward / defense models separate.
 Even more than that... I should try and get around to that player clustering I was thinking about and implement different models for each cluster. Different players play different roles that are (one would assume) all valuable in their own way.  
-Radius Neighbors Regressor gives inconsistent results between uniform weights and distance weights.
+Radius Neighbors Regressor gives inconsistent results between uniform weights and distance weights. It also seems to just give inconsistent results in general once I don't hold the random_state constant. This might not be a good model to use.
 
 
 ## Day 5:  
@@ -67,3 +67,5 @@ Now that we have clusters we can do some semi-supervised learning
 * Overall RMSE for Linear Regression is: $854703.2  
 * Overall RMSE for AdaBoost is: $931105.85  
 * Overall RMSE for Gradient Boost is: $899509.64  
+
+Overall, this doesn't seem to improve the model score all that much, but when I break it down to individual cluster RMSE, all but 2 of the clusters have noticeably improved scores. It's only one cluster each of forwards and defense that scores a lot of points. So I can predict relatively well for the majority of players, it's just not the interesting set of players.
