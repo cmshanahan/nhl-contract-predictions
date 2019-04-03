@@ -69,3 +69,8 @@ Now that we have clusters we can do some semi-supervised learning
 * Overall RMSE for Gradient Boost is: $899509.64  
 
 Overall, this doesn't seem to improve the model score all that much, but when I break it down to individual cluster RMSE, all but 2 of the clusters have noticeably improved scores. It's only one cluster each of forwards and defense that scores a lot of points. So I can predict relatively well for the majority of players, it's just not the interesting set of players.
+
+
+# Day 7
+Took yesterday to smooth out my pipeline more than keep pushing on with modeling. It was good to go back and remind myself how this data got to where it was.
+Today I fiddled with clustering a little bit, and ran my models on all features instead of just the features I clustered on.
