@@ -217,3 +217,58 @@ def run_clustered_models(clusts, yclusts):
                                                    round(rmse(predlist[m], y_test), 2)))
 
     return predlist
+
+
+def k_means(X, k=5, max_iter=1000):
+    """Performs k means
+    Args:
+    - X - feature matrix
+    - k - number of clusters
+    - max_iter - maximum iterations
+    Returns:
+    - clusters - dict mapping cluster centers to observations
+    """
+    centers = [tuple(pt) for pt in random.sample(list(X), k)]
+    for i in range(max_iter):
+        clusters = defaultdict(list)
+
+        for datapoint in X:
+            distances = [euclidean(datapoint, center) for center in centers]
+            center = centers[np.argmin(distances)]
+            clusters[center].append(datapoint)
+
+        new_centers = []
+        for center, pts in clusters.items():
+            new_center = np.mean(pts, axis=0)
+            new_centers.append(tuple(new_center))
+
+        if set(new_centers) == set(centers):
+            break
+
+        centers = new_centers
+
+    return clusters
+
+def sse(clusters):
+    """Sum squared euclidean distance of all points to their cluster center"""
+    sum_squared_residuals = 0
+    for center, pts in clusters.items():
+        for pt in pts:
+            sum_squared_residuals += euclidean(pt, center)**2
+    return sum_squared_residuals
+
+def plot_k_sse(X, min_k, max_k):
+    """Plots sse for values of k between min_k and max_k
+    Args:
+    - X - feature matrix
+    - min_k, max_k - smallest and largest k to plot sse for
+    """
+    k_values = range(min_k, max_k+1)
+    sse_values = []
+    for k in k_values:
+        clusters = k_means(X, k=k)
+        sse_values.append(sse(clusters))
+    plt.plot(k_values, sse_values)
+    plt.xlabel('k')
+    plt.ylabel('sum squared error')
+    plt.show()
