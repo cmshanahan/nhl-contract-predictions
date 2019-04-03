@@ -74,3 +74,4 @@ Overall, this doesn't seem to improve the model score all that much, but when I 
 # Day 7
 Took yesterday to smooth out my pipeline more than keep pushing on with modeling. It was good to go back and remind myself how this data got to where it was.
 Today I fiddled with clustering a little bit, and ran my models on all features instead of just the features I clustered on.
+Maybe for predicting length I need to predict salary first, and then use salary as a feature for length
