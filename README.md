@@ -79,3 +79,7 @@ Maybe for predicting length I need to predict salary first, and then use salary 
 # Day 8
 Should develop code to run model n_iter times.
 Found clusters I'm happy with, clustered on 3 features: mean Total Points/60, TOI/GP, and 3yr Off. Zone Start %.
+
+
+Here's a chart illustrating some survivorship bias in my data:
+![alt text](images/Avg_cap_pct_over_time.png "graph")
