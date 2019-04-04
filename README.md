@@ -82,5 +82,5 @@ Found clusters I'm happy with, clustered on 3 features: mean Total Points/60, TO
 
 
 Here's a chart illustrating some survivorship bias in my data:
-![drawing](images/Avg_cap_pct_over_time.png =100x)
+![drawing](images/Avg_cap_pct_over_time.png =100x100)
 The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.
