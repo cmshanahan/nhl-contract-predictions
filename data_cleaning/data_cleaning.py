@@ -412,5 +412,7 @@ def clean_features_data():
     df['Penalties Drawn/60'] = (df['Penalties Drawn']/df['TOI']) * 60
     df['mean Penalties Drawn/60'] = (df['sum Penalties Drawn']/df['sum TOI']) * 60
     df['mean Faceoffs pct'] = (df['sum Faceoffs Won'] / df['sum Faceoffs Lost'])
+    df['Goalness'] = df['Goals']/(df['Total Points'] + 1)
+    df['mean Goalness'] = df['sum Goals']/(df['sum Total Points'] + 1)
 
     return df
