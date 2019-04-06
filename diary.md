@@ -103,3 +103,7 @@ estimator=GradientBoostingRegressor(alpha=0.9, criterion='friedman_mse', init=No
              min_samples_split=2, min_weight_fraction_leaf=0.0,
              n_estimators=100, presort='auto', random_state=None,
              subsample=1.0, verbose=0, warm_start=False),
+
+Permutation importances:
+For salary: TOI/GP, Total Points, (other variants), signing age, iCF,
+For length: predicted salary, signing age, GF% Rel, hits taken, mean GP
