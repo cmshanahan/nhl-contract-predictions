@@ -19,12 +19,13 @@ The stats data was then merged with the contracts data so that every row contain
 The raw data and the cleaned / featurized / merged data were then stored in SQL databases using a Postgres image on a Docker container.
 
 Here's a chart illustrating some survivorship bias in my data:
-<img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="1000"/>  
+<img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="600"/>  
 The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.
 
 Features that stood out:
  - Goals and Assists obviously had a significant positive correlation to salary
  - Penalties in general did not have a very visible effect, but major penalties had a strong negative effect (Skilled players tend to fight less)
+ - Higher cap hit corresponds to higher cumulative stats (this makes sense because they play more)
 
 
 

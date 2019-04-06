@@ -5,9 +5,9 @@ from collections import defaultdict
 
 
 class ContractPredictor():
-    def __init__(self, m = GradientBoostingRegressor, year = 2019):
+    def __init__(self, m = GradientBoostingRegressor, year = 2019, **kwargs):
         self.m = m
-
+        self.kwargs = kwargs
         self.scap = {
             2005: 39000000,
             2006: 44000000,
@@ -38,13 +38,13 @@ class ContractPredictor():
         self.yp_train = yp_train
         self.yl_train = yl_train
 
-        self.sal_model = self.m()
+        self.sal_model = self.m(**self.kwargs)
         self.sal_model.fit(X_train, yp_train)
 
         Xl_train = X_train.copy()
         Xl_train = np.hstack((Xl_train, self.sal_model.predict(Xl_train).reshape(-1,1)))
 
-        self.len_model = self.m()
+        self.len_model = self.m(**self.kwargs)
         self.len_model.fit(Xl_train, yl_train)
         pass
 

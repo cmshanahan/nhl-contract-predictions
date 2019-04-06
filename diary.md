@@ -88,8 +88,18 @@ What didn't work:
  - KNearest Neighbors
  - Radius Neighbors
  - Picking my own clusters and modeling off those
- - using PCA to get clusters and modeling off those 
+ - using PCA to get clusters and modeling off those
 
 Here's a chart illustrating some survivorship bias in my data:
 <img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="1000"/>  
 The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.
+
+
+Grid Search results:  
+estimator=GradientBoostingRegressor(alpha=0.9, criterion='friedman_mse', init=None,
+             learning_rate=0.1, loss='ls', max_depth=3, max_features=None,
+             max_leaf_nodes=None, min_impurity_decrease=0.0,
+             min_impurity_split=None, min_samples_leaf=1,
+             min_samples_split=2, min_weight_fraction_leaf=0.0,
+             n_estimators=100, presort='auto', random_state=None,
+             subsample=1.0, verbose=0, warm_start=False),
