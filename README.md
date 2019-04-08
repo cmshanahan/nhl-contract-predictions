@@ -33,3 +33,11 @@ Features that stood out:
  * Thanks to PuckPedia for sharing their contracts database with me
  * Natural Stat Trick for having advanced stats data freely available for download
  * The instructors and my fellow classmates at Galvanize
+
+### Tools used:  
+ - Python  
+ - sklearn  
+ - pandas  
+ - SQL  
+ - NHL API  
+ - Contract data from excel  

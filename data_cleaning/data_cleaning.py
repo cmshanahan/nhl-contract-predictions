@@ -4,6 +4,17 @@ import matplotlib.pyplot as plt
 import psycopg2 as pg2
 from collections import defaultdict
 
+def clean_FA():
+    df = pd.read_csv('../data/free_agents_2019.csv')
+    df['signing_status'] = df['ufa_status'].apply(lambda x: 1 if 'UFA' else 0)
+    df = df[(df.position != 'G') & (df.position != 27) & (df.position != 30)]
+    df['forward'] = (df.position != 'D').replace([True, False], [1, 0])
+    df['Season_Player'] = '2018 ' + df['player']
+    df.set_index(df['Season_Player'], inplace=True)
+    df.drop('Season_Player', axis=1, inplace=True)
+    fa = df[['player', 'age', 'forward', 'signing_status']]
+    return fa
+
 def clean_contracts_data(file = None, goalies = False):
     #load in dataframe from csv
     if file:
@@ -247,36 +258,37 @@ def ufa_check(x):
     else:
         return 'RFA'
 
-#auxillary function to check if contract was signed as UFA or RFA
-def ufa_check(x):
-    if x == True:
-        return 'UFA'
+def ufa_to_binary(x):
+    if x == 'UFA':
+        return 1
     else:
-        return 'RFA'
+        return 0
 
 
-def clean_features_data():
+def clean_features_data(sql=True):
+    if sql:
+        #read in player season total stats from SQL
+        conn = pg2.connect(dbname='nhl', user='postgres', host='localhost', port='5435')
+        cur = conn.cursor()
+        query = '''
+                SELECT *
+                FROM pst;
+                '''
+        cur.execute(query)
+        pst = list(cur)
 
-    #read in player season total stats from SQL
-    conn = pg2.connect(dbname='nhl', user='postgres', host='localhost', port='5435')
-    cur = conn.cursor()
-    query = '''
-            SELECT *
-            FROM pst;
-            '''
-    cur.execute(query)
-    pst = list(cur)
+        pst_cols = ['Season_Player', 'Player', 'Season', 'Position', 'GP', 'TOI', 'Goals',
+                    'Total Assists', 'First Assists', 'Second Assists', 'Total Points',
+                   'IPP', 'Shots', 'SH%', 'iCF', 'iFF', 'iSCF', 'iHDCF', 'Rush Attempts',
+                   'Rebounds Created', 'PIM', 'Total Penalties', 'Minor', 'Major',
+                   'Misconduct', 'Penalties Drawn', 'Giveaways', 'Takeaways', 'Hits',
+                   'Hits Taken', 'Shots Blocked', 'Faceoffs Won', 'Faceoffs Lost',
+                   'Faceoffs %'
+                    ]
 
-    pst_cols = ['Season_Player', 'Player', 'Season', 'Position', 'GP', 'TOI', 'Goals',
-                'Total Assists', 'First Assists', 'Second Assists', 'Total Points',
-               'IPP', 'Shots', 'SH%', 'iCF', 'iFF', 'iSCF', 'iHDCF', 'Rush Attempts',
-               'Rebounds Created', 'PIM', 'Total Penalties', 'Minor', 'Major',
-               'Misconduct', 'Penalties Drawn', 'Giveaways', 'Takeaways', 'Hits',
-               'Hits Taken', 'Shots Blocked', 'Faceoffs Won', 'Faceoffs Lost',
-               'Faceoffs %'
-                ]
-
-    df = pd.DataFrame(pst, columns = pst_cols)
+        df = pd.DataFrame(pst, columns = pst_cols)
+    else:
+        df = pd.read_csv('../data/up_all_pst.csv')
 
     dfsummable = df.drop(['SH%', 'Faceoffs %', 'IPP'], axis=1)
 
