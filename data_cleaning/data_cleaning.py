@@ -9,10 +9,11 @@ def clean_FA():
     df['signing_status'] = df['ufa_status'].apply(lambda x: 1 if 'UFA' else 0)
     df = df[(df.position != 'G') & (df.position != 27) & (df.position != 30)]
     df['forward'] = (df.position != 'D').replace([True, False], [1, 0])
-    df['Season_Player'] = '2018 ' + df['player']
+    df['Season_Player'] = '2018 ' + df['Player']
     df.set_index(df['Season_Player'], inplace=True)
     df.drop('Season_Player', axis=1, inplace=True)
-    fa = df[['player', 'age', 'forward', 'signing_status']]
+    fa = df[['Player', 'signing_age', 'forward', 'signing_status']]
+    fa['signing_year'] = 2019
     return fa
 
 def clean_contracts_data(file = None, goalies = False):
@@ -108,7 +109,6 @@ def clean_contracts_data(file = None, goalies = False):
     df.replace(['RW', 'LW'], ['Right Wing', 'Left Wing'], inplace=True)
 
     #add dummy variables for positions
-    df['skater'] = df.position != 'Goaltender'
     df['forward'] = (df.position != 'Goaltender') & (df.position != 'Defense')
     df.replace([True, False], [1, 0], inplace=True)
 
@@ -117,14 +117,16 @@ def clean_contracts_data(file = None, goalies = False):
 
     #Add a column for whether the contract was signed as UFA or RFA
     df['signing_status'] = df['signing_year'] >= df['ufa_year']
-    df['signing_status'] = df['signing_status'].apply(ufa_check)
+    #df['signing_status'] = df['signing_status'].apply(ufa_check)
 
     #eliminate duplicate rows with the same contract
     df = df.groupby('contract_id').head(1)
 
-    #eliminate goalie contracts
+    #eliminate goalie contracts or tag them
     if goalies == False:
         df = df[df.position != 'Goaltender']
+    else:
+        df['skater'] = df.position != 'Goaltender'
 
     return df
 
@@ -265,7 +267,7 @@ def ufa_to_binary(x):
         return 0
 
 
-def clean_features_data(sql=True):
+def clean_features_data(sql=True, new_fas = False):
     if sql:
         #read in player season total stats from SQL
         conn = pg2.connect(dbname='nhl', user='postgres', host='localhost', port='5435')
@@ -300,8 +302,8 @@ def clean_features_data(sql=True):
                'Hits Taken', 'Shots Blocked', 'Faceoffs Won', 'Faceoffs Lost']
 
     #read in on_ice relative stats per season and over 3 year window
-    oirel = pd.read_csv('../data/all_oirel.csv')
-    woirel = pd.read_csv('../data/all_woirel.csv')
+    oirel = pd.read_csv('../data/up_all_oirel.csv')
+    woirel = pd.read_csv('../data/up_all_woirel.csv')
 
     #fix column labeling
     oirel['Season'] = oirel['Unnamed: 0.1']
@@ -318,7 +320,10 @@ def clean_features_data(sql=True):
     woirel.set_index(woirel.Season_Player, inplace=True)
 
     #read in target data to narrow down required player seasons
-    contracts = clean_contracts_data()
+    if new_fas:
+        contracts = clean_FA()
+    else:
+        contracts = clean_contracts_data()
 
     #set up default dictionaries to hold individual player stats
     allstats = defaultdict(pd.DataFrame)
@@ -331,7 +336,7 @@ def clean_features_data(sql=True):
     for player in contracts['Player'].unique():
         allstats[player] = dfsummable[df.Player == player]
         allstats[player].sort_values(by='Season', inplace=True)
-        allstats[player]['Season_index'] = pd.date_range(end='2018',
+        allstats[player]['Season_index'] = pd.date_range(end='2019',
                                                    periods = allstats[player].shape[0],
                                                    freq='Y')
         allstats[player].set_index(allstats[player].Season_index, inplace=True)
@@ -344,11 +349,11 @@ def clean_features_data(sql=True):
         allsumstats[player]['Faceoffs Won'] + allsumstats[player]['Faceoffs Lost'])
 
     scols, mcols = [], []
-    #Relabeling sum and mean columns for clarity, arbitrarily using Hertl for convenience,
+    #Relabeling sum and mean columns for clarity, arbitrarily using Pavelski for convenience,
     #could be any player
-    for i in allsumstats['Tomas Hertl'].columns:
+    for i in allsumstats['Joe Pavelski'].columns:
         scols.append('sum '+i)
-    for i in allmeanstats['Tomas Hertl'].columns:
+    for i in allmeanstats['Joe Pavelski'].columns:
         mcols.append('mean '+i)
     for p in allstats:
         allsumstats[p].columns = scols
@@ -377,8 +382,7 @@ def clean_features_data(sql=True):
     allallstats = pd.merge(allallstats, m_woirel, on = 'Season_Player')
 
     #remove contracts signed before 2010 (lack of stats)
-    #set contract_id to be the index for contracts
-    table = contracts[contracts.signing_year > 2009].set_index('contract_id')
+    table = contracts[contracts.signing_year > 2009]#.set_index('contract_id')
 
     #add column to line up contract years and stats years
     table['year_match'] = table.signing_year - 1
@@ -387,13 +391,15 @@ def clean_features_data(sql=True):
     table = pd.merge(table, allallstats,
                 how = 'left', left_on = ['Player', 'year_match'],
                 right_on = ['Player', 'Season'])
+
     #drop rows that had missing seasons / indexing issues leading to NaNs
     #1700 rows down to 1440
-    table.dropna(inplace=True)
+    table.dropna(thresh = 150, inplace=True)
 
-    #Only take contraccts signed after 2013 to eliminate survivorship bias in older
-    #contracts. 1440 rows down to 1170.
+    #Only take contracts signed after 2013 to eliminate survivorship bias in older
+    #contracts signed before the last CBA.
     table = table[table.Season > 2013]
+
 
     #bring back IPP stat
     df = pd.merge(table, df[['Season_Player', 'IPP']], how='left', on = 'Season_Player')
@@ -423,8 +429,30 @@ def clean_features_data(sql=True):
     df['mean PIM/60'] = (df['sum PIM']/df['sum TOI']) * 60
     df['Penalties Drawn/60'] = (df['Penalties Drawn']/df['TOI']) * 60
     df['mean Penalties Drawn/60'] = (df['sum Penalties Drawn']/df['sum TOI']) * 60
-    df['mean Faceoffs pct'] = (df['sum Faceoffs Won'] / df['sum Faceoffs Lost'])
+    df['mean Faceoffs pct'] = (df['sum Faceoffs Won'] / (df['sum Faceoffs Won'] + df['sum Faceoffs Lost']))
     df['Goalness'] = df['Goals']/(df['Total Points'] + 1)
     df['mean Goalness'] = df['sum Goals']/(df['sum Total Points'] + 1)
+
+    df.drop(['3yr Season_Player', 'year_match', 'Team', 'Season', 'Season_Player', 'Season_index'], axis=1, inplace=True)
+
+    df.rename({'3yr Off.\xa0Zone Starts/60': '3yr Off. Zone Starts/60',
+                 '3yr Neu.\xa0Zone Starts/60': '3yr Neu. Zone Starts/60',
+                 '3yr Def.\xa0Zone Starts/60': '3yr Def. Zone Starts/60',
+                 '3yr On\xa0The\xa0Fly Starts/60': '3yr On The Fly Starts/60',
+                 '3yr Off.\xa0Zone Start %': '3yr Off. Zone Start %',
+                 '3yr Off.\xa0Zone Faceoffs/60': '3yr Off. Zone Faceoffs/60',
+                 '3yr Neu.\xa0Zone Faceoffs/60': '3yr Neu. Zone Faceoffs/60',
+                 '3yr Def.\xa0Zone Faceoffs/60': '3yr Def. Zone Faceoffs/60',
+                 '3yr Off.\xa0Zone Faceoff %': '3yr Off. Zone Faceoff %',
+                 'Off.\xa0Zone Starts/60': 'Off. Zone Starts/60',
+                 'Neu.\xa0Zone Starts/60': 'Neu. Zone Starts/60',
+                 'Def.\xa0Zone Starts/60': 'Def. Zone Starts/60',
+                 'On\xa0The\xa0Fly Starts/60': 'On The Fly Starts/60',
+                 'Off.\xa0Zone Start %': 'Off. Zone Start %',
+                 'Off.\xa0Zone Faceoffs/60': 'Off Zone Faceoffs/60',
+                 'Neu.\xa0Zone Faceoffs/60': 'Neu. Zone Faceoffs/60',
+                 'Def.\xa0Zone Faceoffs/60': 'Def. Zone Faceoffs/60',
+                 'Off.\xa0Zone Faceoff %': 'Off Zone Faceoff %',}
+                 , axis = 1, inplace=True)
 
     return df
