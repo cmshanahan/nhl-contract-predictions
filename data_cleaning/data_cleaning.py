@@ -456,3 +456,52 @@ def clean_features_data(sql=True, new_fas = False):
                  , axis = 1, inplace=True)
 
     return df
+
+def nst_to_my_clean():
+    '''
+    Intermediate function to prepare raw csv files from Natural Stat Trick to my cleaning functions.
+    Files should be saved with directory/name formats:
+    '../data/<year>_pst_nst.csv' for single year individual counts,
+    '../data/<year>_oirel_nst.csv' for single year on-ice relative,
+    '../data/<year>wind_oirel_nst.csv' for 3 year on-ice relative
+    '''
+
+    #Bring in most recent year's stats csv files as a starting point
+    #Starting with current year stats, will need to change if redone later
+    df_pst = pd.read_csv('../data/nat_stat_trick/2018_pst_nst.csv')
+    df_oirel = pd.read_csv('../data/nat_stat_trick/2018_oirel_nst.csv')
+    df_woirel = pd.read_csv('../data/nat_stat_trick/2018wind_oirel_nst.csv')
+
+    #repurpose phantom column as season
+    df_pst['Unnamed: 0'] = 2018
+    df_oirel['Unnamed: 0'] = 2018
+    df_woirel['Unnamed: 0'] = 2018
+
+    #Bring in prior year stats back to start
+    for y in range(2017, 2006, -1):
+        if y > 2008:
+            twoirel = pd.read_csv('../data/nat_stat_trick/{}wind_oirel_nst.csv'.format(y))
+            twoirel['Unnamed: 0'] = y
+            df_woirel = pd.concat((df_woirel, twoirel))
+
+        tpst = pd.read_csv('../data/nat_stat_trick/{}_pst_nst.csv'.format(y))
+        toirel = pd.read_csv('../data/nat_stat_trick/{}_oirel_nst.csv'.format(y))
+
+        tpst['Unnamed: 0'] = y
+        toirel['Unnamed: 0'] = y
+
+        df_pst = pd.concat((df_pst, tpst))
+        df_oirel = pd.concat((df_oirel, toirel))
+
+    #Set index as season / player combo
+    df_pst['Season_Player'] = df_pst['Unnamed: 0'].apply(lambda x: str(x))
+    df_pst['Season_Player'] = df_pst['Season_Player'] + ' ' + df_pst['Player']
+    df_pst.set_index(df_pst['Season_Player'], inplace=True)
+    df_pst.drop('Season_Player', axis=1, inplace=True)
+    #rename season column
+    df_pst.rename({'Unnamed: 0': 'Season'}, axis='columns', inplace=True)
+
+    #Save compiled files to csv
+    df_pst.to_csv('../data/up_all_pst.csv')
+    df_oirel.to_csv('../data/up_all_oirel.csv')
+    df_woirel.to_csv('../data/up_all_woirel.csv')

@@ -134,7 +134,6 @@ class ContractRegressor():
         #predict length
         self.length_preds = self.len_model.predict(Xl_test)
 
-
         return self.cap_preds, self.length_preds
 
     def score(self, X_test, yp_test, yl_test):
