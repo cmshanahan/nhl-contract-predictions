@@ -76,6 +76,8 @@ class ContractRegressor():
         Handle any NaN values in the dataframe. Returns an imputed version of
         the feature dataframe.
         '''
+        #Store index for later
+        idx = X.index
 
         #My data tended to contain a few '-' values instead of 0s, fix that.
         X.replace('-', 0, inplace=True)
@@ -87,11 +89,12 @@ class ContractRegressor():
         #dtype: object
         X = X.apply(pd.to_numeric)
 
+
         #perform imputing for any columns still missing values
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0, verbose = 1)
         Ximp = imp.fit_transform(X)
 
-        return pd.DataFrame(Ximp, columns=self.xcols)
+        return pd.DataFrame(Ximp, index=idx, columns=self.xcols)
 
     def fit(self, X_train, yp_train, yl_train):
         '''
