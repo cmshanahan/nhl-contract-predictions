@@ -9,8 +9,8 @@ This project looks at predicting NHL player salary cap hits and length of contra
  * [Modeling Choices](#Modeling-Choices)
  * [Alternate paths](#Alternate-paths)
  * [Conclusion](#Conclusion)
-  - Tools used
-  - Thanks
+  - [Tools used](#tools-used)
+  - [Thanks](#special-thanks)
 
 
 ## Background:
