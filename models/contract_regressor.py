@@ -185,3 +185,40 @@ class ContractRegressor():
         pcml = yl_train.mean()
         print('RMSE pick mean length: {} years'.format(self.rmse(pcml, yl_test, 1)))
         return pcmp, pcml
+
+def prediction_cleaning(sal_preds, len_preds, idx):
+    '''
+    Output cap hit and length predictions into a readable pandas dataframe.
+    Inputs:
+    sal_preds: 1-D numpy array
+    len_preds: 1-D numpy array
+    idx: the index of the original data's DataFrame
+    Returns:
+    A 3 column pandas dataframe
+    '''
+    #create dataframe
+    preds_df = pd.DataFrame(index=idx)
+    preds_df['cap_pct'] = sal_preds
+    preds_df['length'] = len_preds
+
+    #A helper function that improves the readability of our output for cap_hit in dollars
+    def int_to_mon_str(x):
+        s = str(x)
+        if x < 1000000:
+            s = '$' + s[:3] + ',' + s[3:]
+        elif x < 10000000:
+            s = '$' + s[0] + ',' + s[1:4] + ',' + s[4:]
+        else:
+            s = '$' + s[0:2] + ',' + s[2:5] + ',' + s[5:]
+        return s
+
+    #add column for cap_hit in dollars
+    preds_df['2019_cap_hit'] = fa_preds_df.cap_pct * 83000000 // 100
+    preds_df['2019_cap_hit'] = fa_preds_df['2019_cap_hit'].apply(lambda x: int(round(x, -3)))
+    preds_df['2019_cap_hit'] = fa_preds_df['2019_cap_hit'].apply(int_to_mon_str)
+
+    #Improve readability of prediction columns
+    preds_df['cap_pct'] = fa_preds_df['cap_pct'].apply(lambda x: round(x, 2))
+    preds_df['length'] = fa_preds_df['length'].apply(lambda x: round(x, 1))
+
+    return preds_df

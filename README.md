@@ -6,22 +6,23 @@ This project looks at predicting NHL player salary cap hits and length of contra
 ### Table of Contents:
  * [Background](#Background)
  * [Data](#Data)
- * [Modeling Choices](#Modeling-Choices)
+ * [Model](#the-model)
+ * [Output](#output)
  * [Alternate paths](#Alternate-paths)
  * [Conclusion](#Conclusion)
-  - [Tools used](#tools-used)
-  - [Thanks](#special-thanks)
+    - [Tools used](#tools-used)
+    - [Special Thanks](#special-thanks)
 
 
 ## Background:
 #### The NHL salary cap:
 One of the defining features of most modern sports leagues (including the NHL) is a salary cap. The salary cap sets a hard limit on how much each team can spend on its players’ contracts in a given year. It enforces parity and keeps leagues competitive and interesting. Previously successful or independently wealthy teams cannot enrich themselves further by outspending poorer teams. This ensures wider appeal in the entire league, and for the most part, prevents the same few teams from constantly being in power.  
 As such, managing a team’s contracts and salary cap space is extremely important for any team that wants to even pretend to be competitive. Most continually successful teams are very good at not overpaying their high-end talent and identifying key players that can be valuable without putting too big a dent in the team’s salary cap situation. Teams are always looking to get better for cheaper.
-More data is available from [Wikipedia here](https://en.wikipedia.org/wiki/NHL_salary_cap).
+More data on the salary cap is available from [Wikipedia here](https://en.wikipedia.org/wiki/NHL_salary_cap).
 
 
 ## Data:
-Contracts were obtained with permission from PuckPedia.com and included every player under an NHL contract in the 2017-2018 and 2016-2017 seasons. In all, I have 1460 contracts to work with.
+Contracts were obtained with permission from [PuckPedia.com](https://puckpedia.com/) and included every player under an NHL contract in the 2017-2018 and 2016-2017 seasons. In all, I have 1460 contracts to work with.
 Stats were downloaded in csv format from Natural Stat Trick.
 I used Pandas rolling and aggregate functions to calculate average stats over the prior 3-year span.
 The stats data was then merged with the contracts data so that every row contained a player contract and that player's stats over the season prior to signing and aggregated over 3 years prior to signing.
@@ -36,7 +37,7 @@ Features that stood out:
  - Penalties in general did not have a very visible effect, but major penalties had a strong negative effect (Skilled players tend to fight less)
  - Higher cap hit corresponds to higher cumulative stats (this makes sense because they play more)
 
-## The Model:
+## Model:
 The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model.
 
 ### Modeling Choices:
@@ -48,17 +49,25 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 * Contracts signed before 2010 were excluded as Natural Stat Trick's data only goes back to 2007, thus there is no 3 year window.
 * On top of that I decided to exclude all contracts signed before the last Collective Bargaining Agreement in 2013 to eliminate bias from contracts signed under a different set of rules.
 
+## Output:
+RMSE pick mean cap_pct: 2.9%
+    translates to 2019 Cap Hit of: $2407000.0
+RMSE pick mean length: 1.9 years
 
-
-### Special Thanks:
- * Thanks to PuckPedia for sharing their contracts database with me
- * Natural Stat Trick for having advanced stats data freely available for download
- * The instructors and my fellow classmates at Galvanize
+RMSE Cap_pct: 0.97%
+    translates to 2019 Cap Hit of: $805100.0
+RMSE Length: 1.0 years
 
 ### Tools used:  
  - Python  
  - sklearn  
  - pandas  
- - SQL  
+ - SQL
+ - PuckPedia
+ - Natural Stat Trick
  - NHL API  
- - Contract data from excel  
+
+### Special Thanks:
+ * Thanks to PuckPedia for sharing their contracts database with me
+ * Natural Stat Trick for having advanced stats data freely available for download
+ * The instructors and my fellow classmates at Galvanize
