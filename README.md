@@ -4,16 +4,16 @@
 This project looks at predicting NHL player salary cap hits and length of contract.
 
 ### Table of Contents:
- * Background
- * Data
- * Modeling Choices
- * Alternate paths
- * Conclusion
-  * Tools used
-  * Thanks
+ * [Background](#Background)
+ * [Data](#Data)
+ * [Modeling Choices](#Modeling-Choices)
+ * [Alternate paths](#Alternate-paths)
+ * [Conclusion](#Conclusion)
+  - Tools used
+  - Thanks
 
 
-## Background and Motivation:
+## Background:
 #### The NHL salary cap:
 One of the defining features of most modern sports leagues (including the NHL) is a salary cap. The salary cap sets a hard limit on how much each team can spend on its players’ contracts in a given year. It enforces parity and keeps leagues competitive and interesting. Previously successful or independently wealthy teams cannot enrich themselves further by outspending poorer teams. This ensures wider appeal in the entire league, and for the most part, prevents the same few teams from constantly being in power.  
 As such, managing a team’s contracts and salary cap space is extremely important for any team that wants to even pretend to be competitive. Most continually successful teams are very good at not overpaying their high-end talent and identifying key players that can be valuable without putting too big a dent in the team’s salary cap situation. Teams are always looking to get better for cheaper.
