@@ -54,14 +54,21 @@ RMSE pick mean cap_pct: 2.9%
     translates to 2019 Cap Hit of: $2407000.0
 RMSE pick mean length: 1.9 years
 
-RMSE Cap_pct: 0.97%
+RMSE Cap_pct: 0.97% (Improvement: 67%)
     translates to 2019 Cap Hit of: $805100.0
-RMSE Length: 1.0 years
+RMSE Length: 1.0 years (Improvement: 47%)
+
+RMSE for predicting mean Total Value: $17899000.0
+RMSE for Gradient Boosted Model Total Value: $7523000.0
+Improvement: 58.0%
 
 ### Tools used:  
  - Python  
  - sklearn  
  - pandas  
+ - matplotlib
+ - seaborn
+ - Tableau
  - SQL
  - PuckPedia
  - Natural Stat Trick
