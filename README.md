@@ -43,9 +43,8 @@ One major challenge in dealing with the data in this problem was the relatively 
 
 <img src="images/cap_length_box.png" alt="drawing" width="500"/>
 
-Here's a chart illustrating some survivorship bias in my data:
-<img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="600"/>  
-The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.
+<img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="350"/>  
+There's some natural survivorship bias in older contracts. The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.
 
 Features and trends that stood out:
  - Goals and Assists had a clear and significant positive correlation to salary
@@ -85,8 +84,8 @@ One notion I had going into this project was that there are different types of p
 I ultimately had to reject this hypothesis as I found no method of clustering the players that resulted in cleanly separable groups. Running independent models on these clusters did no better than running a global non-parametric model. In fact by further segmenting my already small dataset, the variance problem became even worse.  
 Another factor reducing the effectiveness of clustering was the high dimensionality of the data, which often made computed distances end up being completely arbitrary. I tried selecting features that I thought would well-define player usage (such as Offensive Zone Start % and TOI/GP) with mediocre results. Objective dimensionality reduction using Principal Component Analysis (PCA) did not help either.
 
-<img src="images/intuit_clusters.png" alt="drawing" width="500"/>
-<img src="images/pca_clusters.png" alt="drawing" width="500"/>
+<img src="images/intuit_clusters.png" alt="drawing" width="400"/>
+<img src="images/pca_clusters.png" alt="drawing" width="400"/>
 
 ### Nearest Neighbors Regressors:
 Nearest neighbors regressors were evaluated as another possible metric for evaluating salaries (k Nearest Neighbors and Radius Neighbors). In fact this was how I believed salaries were evaluated going into this process. However as encountered before with clustering, due to the high dimensionality of the data, a player's "nearest neighbors" would often have little to do with him in the way of actually meaningful performance statistics, or would often have few to none neighbors in a predetermined "radius". This made for wildly inconsistent results when it came to a predictive model.
@@ -111,7 +110,7 @@ I calculated feature importances using the Random Forest Permutation Importance 
 I've displayed here the 5 features that came out with the highest importance to the salary model. Intuitively, these should make sense, players that score more and play more are likely to make more money. While player position was a feature, it didn't appear here, which I found interesting, although it may be subtly encoded within the 3rd and 4th feature, TOI / Game as there is such a huge split between the positions.  I did not include injury history as a feature in my model, but cumulative TOI encodes some information about whether the player missed time due to injury. I found the inclusion of iCF shot attempts interesting as well in that there could be some growing consideration for advanced stats in salary decisions.  
 In the plot below, TOI and Total Points are plotted against each other, where point size is the frequency of players being in that statistical area, and color represents the magnitude of their salary.  
 
-<img src="images/cap_ht_scat.png" alt="drawing" width="500"/>
+<img src="images/cap_ht_scat.png" alt="drawing" width="800"/>
 
 #### Important Length Features
 * Predicted Cap %
@@ -120,9 +119,9 @@ In the plot below, TOI and Total Points are plotted against each other, where po
 There were other features fed into the length model, but these two were far and away the most important, which makes sense. One would think salary is normally a much larger sticking point for contracts than length.
 I found it even more interesting that even when given all of the same features as the salary model, the salary prediction turned out to be the single most important feature to split tree decisions on.
 As you can see below, older players tend to get shorter contracts, while younger players or those in their prime who have earned high salaries tend to get the longest contracts.  
-This plot is similar to the one above, except the points represent contract lengths and the axes are player age and salary. 
+This plot is similar to the one above, except the points represent contract lengths and the axes are player age and salary.
 
-<img src="images/len_ht_scat.png" alt="drawing" width="500"/>
+<img src="images/len_ht_scat.png" alt="drawing" width="800"/>
 
 ### Results:
 After running my model on the test set for the data, I ended up with RMSE of 0.97% and 1.0 years respectively for salary and contract length. This converts to roughly $805,000 in 2019. Comparing this to the baseline model of selecting the mean contract every time, we find a *67% improvement on salary, and a 47% improvement on contract length*.  
@@ -143,7 +142,7 @@ RMSE for Gradient Boosted Model Total Value: $7,523,000
 
 As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results. I've displayed a few of the more prominent free agents in the following table, and the full results are viewable as a csv in the conc folder.
 
-<img src="images/fa_preds.png" alt="drawing" width="500"/>  
+<img src="images/fa_preds.png" alt="drawing" width="650"/>  
 
 By eyeballing it, I might tweak a few of the numbers here and there, but none of the predictions are truly surprising to me. I think that part of it is a matter of recent trends or a few splashy contracts affecting our subjective perceptions, but not providing enough of a quantitative nudge to influence the machine learning model. We'll find out in July!
 
