@@ -55,8 +55,7 @@ There's some natural survivorship bias in older contracts. The average percentag
  - Elite players who are younger or in their prime usually get signed to max length contracts. This makes sense as the team gets to lock up the player's talent long term, and the player gets financial security.
  - The data distribution is clearly weighted towards many contracts of lower salary and shorter length, but averages are brought up by the best players being paid significantly more.
 
-<img src="images/sal_hist.png" alt="drawing" width="500"/>
-<img src="images/len_hist.png" alt="drawing" width="500" style="float: right;"/>
+<img src="images/sal_hist.png" alt="drawing" width="500"/><img src="images/len_hist.png" alt="drawing" width="500" style="float: right;"/>
 
 
 ## Model:
