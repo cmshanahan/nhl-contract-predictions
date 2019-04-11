@@ -1,7 +1,6 @@
 ## nhl-contract-predictions
-### Predict NHL player contract terms (salary and length) from their in-game stats
+### Predicting NHL player contract terms (salary and length) from their in-game stats
 
-This project looks at predicting two targets, NHL player salary cap hits and length of contract.
 
 ### Table of Contents:
  * [Background](#Background)
@@ -25,7 +24,7 @@ This project looks at predicting two targets, NHL player salary cap hits and len
 #### The NHL salary cap:
 One of the defining features of most modern sports leagues (including the NHL) is a salary cap. The salary cap sets a hard limit on how much each team can spend on its players’ contracts in a given year. It enforces parity and keeps leagues competitive and interesting. Previously successful or independently wealthy teams cannot enrich themselves further by outspending poorer teams. This ensures wider appeal in the entire league, and for the most part, prevents the same few teams from constantly being in power.  
 As such, managing a team’s contracts and salary cap space is extremely important for any team that wants to even pretend to be competitive. Most continually successful teams are very good at not overpaying their high-end talent and identifying key players that can be valuable without putting too big a dent in the team’s salary cap situation. Teams are always looking to get better for cheaper.
-More data on the salary cap is available from [Wikipedia here](https://en.wikipedia.org/wiki/NHL_salary_cap).
+More data on the salary cap is available from [Wikipedia here](https://en.wikipedia.org/wiki/NHL_salary_cap).  
 
 <img src="images/cap_wiki.png" alt="drawing" width="500"/>
 
@@ -45,9 +44,10 @@ One major challenge in dealing with the data in this problem was the relatively 
 <img src="images/cap_length_box.png" alt="drawing" width="500"/>
 
 <img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="450"/>  
-There's some natural survivorship bias in older contracts. The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.
+There's some natural survivorship bias in older contracts. The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.  
 
-Features and trends that stood out:
+
+#### Features and trends that stood out:
  - Goals and Assists had a clear and significant positive correlation to salary
  - Penalties in general did not have a very visible effect, but major penalties had a strong negative effect (Skilled players tend to fight less).
  - Higher cap hit corresponds to higher cumulative stats (this makes sense because they play more).
@@ -56,7 +56,7 @@ Features and trends that stood out:
  - The data distribution is clearly weighted towards many contracts of lower salary and shorter length, but averages are brought up by the best players being paid significantly more.
 
 <img src="images/sal_hist.png" alt="drawing" width="500"/>
-<img src="images/len_hist.png" alt="drawing" width="500"/>
+<img src="images/len_hist.png" alt="drawing" width="500" style="float: right;"/>
 
 
 ## Model:
@@ -72,13 +72,13 @@ Features and trends that stood out:
 * My goal is to predict two targets, salary and contract length. However, sklearn's machine learning package supports predicting a single target. As such, I chose to predict the two targets sequentially, feeding the predicted salary into the model for contract length as an additional feature.  
 
 ### Error Metric and Baseline
-To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
+To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.    
 
-The mean NHL contract is signed at 2.6% ($2,150,000/year assuming a 2019 cap of $83 million) of the salary cap and is 2 years long.
+The mean NHL contract is signed at 2.6% ($2,150,000/year assuming a 2019 cap of $83 million) of the salary cap and is 2 years long.  
 
-RMSE pick mean cap %: 2.9%
-    translates to 2019 Cap Hit of: $2,407,000
-RMSE pick mean length: 1.9 years
+RMSE pick mean cap %: 2.9%  
+    translates to 2019 Cap Hit of: $2,407,000  
+RMSE pick mean length: 1.9 years  
 
 ### kMeans Clustering:
 One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that these inherent players groups could be separated and a more accurate model could be achieved by running separate linear models on each cluster independently.  
