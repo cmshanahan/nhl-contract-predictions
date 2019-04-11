@@ -25,7 +25,7 @@ More data on the salary cap is available from [Wikipedia here](https://en.wikipe
 
 
 ## Data:
-Contracts were obtained with permission from [PuckPedia.com](https://puckpedia.com/) and included every player under an NHL contract in the 2017-2018 and 2016-2017 seasons. In all, I have 1460 contracts to work with.
+Contracts were obtained with permission from [PuckPedia.com](https://puckpedia.com/) and included every player under an active NHL contract in the 2017-2018 and 2016-2017 seasons. In all, I had ~1200 contracts to work with once I eliminated goalies, entry level players, and those who signed contracts under the previous collective bargaining agreement.
 Stats were downloaded in csv format from Natural Stat Trick.
 I used Pandas rolling and aggregate functions to calculate average stats over the prior 3-year span.
 The stats data was then merged with the contracts data so that every row contained a player contract and that player's stats over the season prior to signing and aggregated over 3 years prior to signing.
@@ -48,12 +48,12 @@ Features and trends that stood out:
 <img src="images/sal_hist.png" alt="drawing" width="600"/>
 <img src="images/len_hist.png" alt="drawing" width="600"/>
 
- **<Tableau charts or scatterplots>**
 
 ## Model:
 The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model.
 
-Baseline score.
+### Selecting an Error Metric and a Baseline
+
 
 ### kMeans Clustering:
 One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that
@@ -71,6 +71,9 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 * Entry Level Contracts were excluded from my model's training set as I am only predicting standard level contracts once a player has time played in the NHL.
 * Contracts signed before 2010 were excluded as Natural Stat Trick's data only goes back to 2007, thus there is no 3 year window.
 * On top of that I decided to exclude all contracts signed before the last Collective Bargaining Agreement in 2013 to eliminate bias from contracts signed under a different set of rules.
+
+<img src="images/cap_ht_scat.png" alt="drawing" width="600"/>
+<img src="images/len_ht_scat.png" alt="drawing" width="600"/>
 
 ## Important Features
 
