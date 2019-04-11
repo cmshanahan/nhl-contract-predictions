@@ -131,7 +131,7 @@ RMSE for Gradient Boosted Model Total Value: $7,523,000
 
 As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results.
 
-<img src="images/free_agent_19_preds.png" alt="drawing" width="500"/>
+<img src="images/fa_preds.png" alt="drawing" width="500"/>
 (*Full results available as a csv in the conc folder*)
 
 By eyeballing it, I might tweak a few of the numbers here and there, but none of the predictions are truly surprising to me. I think that part of it is a matter of recent trends or a few splashy contracts affecting our subjective perceptions, but not providing enough of a quantitative nudge to influence the machine learning model. We'll find out in July!
