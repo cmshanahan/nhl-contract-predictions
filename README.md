@@ -16,7 +16,7 @@ This project looks at predicting two targets, NHL player salary cap hits and len
  * [Conclusions](#conclusions)
     - [Important Features](#permutation-importance)
     - [Results](#results)
-    - [Tools used](#tools-used)
+    - [Tools used](#tools-and-resources-used)
     - [Special Thanks](#special-thanks)
 
 
@@ -70,7 +70,7 @@ Features and trends that stood out:
 * On top of that I decided to exclude all contracts signed before the last Collective Bargaining Agreement in 2013 to eliminate bias from contracts signed under a different set of rules.
 * My goal is to predict two targets, salary and contract length. However, sklearn's machine learning package supports predicting a single target. As such, I chose to predict the two targets sequentially, feeding the predicted salary into the model for contract length as an additional feature.  
 
-### Error Metric and a Baseline
+### Error Metric and Baseline
 To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
 
 The mean NHL contract is signed at 2.6% ($2,150,000/year assuming a 2019 cap of $83 million) of the salary cap and is 2 years long.
