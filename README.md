@@ -18,6 +18,7 @@ This project looks at predicting two targets, NHL player salary cap hits and len
     - [Results](#results)
     - [Tools used](#tools-and-resources-used)
     - [Special Thanks](#special-thanks)
+ * [About the Author](#about-the-author)
 
 
 ## Background:
