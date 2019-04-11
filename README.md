@@ -7,12 +7,14 @@ This project looks at predicting two targets, NHL player salary cap hits and len
  * [Background](#Background)
  * [Data](#Data)
  * [Model](#the-model)
-    - [Clustering](#clustering)
-    - [Gradient Boosting Regressor](#gradient-boosting-regressor)
     - [Modeling Choices](#modeling-choices)
-    - [Important Features](#important-features)
- * [Results](#results)
+    - [Error Metric and Baseline](#error-and-baseline)
+    - [Clustering](#clustering)
+    - [Nearest Neighbors Regressors](#nearest-neighbors-regressors)
+    - [Gradient Boosting Regressor](#gradient-boosting-regressor)
  * [Conclusion](#conclusion)
+    - [Important Features](#important-features)
+    - [Results](#results)
     - [Tools used](#tools-used)
     - [Special Thanks](#special-thanks)
 
@@ -28,8 +30,9 @@ More data on the salary cap is available from [Wikipedia here](https://en.wikipe
 Contracts were obtained with permission from [PuckPedia.com](https://puckpedia.com/) and included every player under an active NHL contract in the 2017-2018 and 2016-2017 seasons. In all, I had ~1200 contracts to work with once I eliminated goalies, entry level players, and those who signed contracts under the previous collective bargaining agreement.
 Stats were downloaded in csv format from Natural Stat Trick.
 I used Pandas rolling and aggregate functions to calculate average stats over the prior 3-year span.
-The stats data was then merged with the contracts data so that every row contained a player contract and that player's stats over the season prior to signing and aggregated over 3 years prior to signing.
-The raw data and the cleaned / featurized / merged data were then stored in SQL databases using a Postgres image on a Docker container.
+The stats data was then merged with the contracts data so that every row contained a player contract and that player's stats over the season prior to signing and aggregated over 3 years prior to signing. After all of this, my data contained roughly 200 columns.
+The raw data and the cleaned / featurized / merged data were then stored in SQL databases using a Postgres image on a Docker container.  
+One major challenge in dealing with the data in this problem was the relatively low sample size. This resulted in high variance models, making it difficult to evaluate the impact of individual changes.
 
 <img src="images/cap_length_box.png" alt="drawing" width="600"/>
 
@@ -51,19 +54,6 @@ Features and trends that stood out:
 
 ## Model:
 
-
-### Selecting an Error Metric and a Baseline
-To evaluate my model I chose Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
-
-### kMeans Clustering:
-One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that
-<img src="images/intuit_clusters.png" alt="drawing" width="600"/>
-<img src="images/pca_clusters.png" alt="drawing" width="600"/>
-
-### Gradient Boosting Regressor:
-The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model. I tried several different regression models but ultimately found that Gradient Boosting provided the best and most consistent scores.
-
-
 ### Modeling Choices:
 * Since the salary cap changes inconsistent amounts from year to year (it has always moved upwards, but in theory it could shrink) predictions are made against the contract's percentage of the salary cap at year of signing.
   - The cap hit in real dollars was then calculated by referencing the listed salary cap for that year on [wikipedia](https://en.wikipedia.org/wiki/NHL_salary_cap).
@@ -76,23 +66,42 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 <img src="images/cap_ht_scat.png" alt="drawing" width="600"/>
 <img src="images/len_ht_scat.png" alt="drawing" width="600"/>
 
-## Important Features
+### Selecting an Error Metric and a Baseline
+To evaluate my model I chose Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
 
-### Permutation importance
+### kMeans Clustering:
+One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that these inherent players groups could be separated and a more accurate model could be achieved by running separate linear models on each cluster independently.  
+I ultimately had to reject this hypothesis as I found no method of clustering the players that resulted in cleanly separable groups. Running independent models on these clusters did no better than running a global non-parametric model. In fact by further segmenting my already small dataset, the variance problem became even worse.  
+Another factor reducing the effectiveness of clustering was the high dimensionality of the data, which often made computed distances end up being completely arbitrary. I tried selecting features that I thought would well-define player usage (such as Offensive Zone Start % and TOI/GP) with mediocre results. Objective dimensionality reduction using Principal Component Analysis (PCA) did not help either.
+
+<img src="images/intuit_clusters.png" alt="drawing" width="600"/>
+<img src="images/pca_clusters.png" alt="drawing" width="600"/>
+
+### Nearest Neighbors Regressors
+Nearest neighbors regressors were evaluated as another possible metric for evaluating salaries (k Nearest Neighbors and Radius Neighbors). In fact this was how I believed salaries were evaluated going into this process. However as encountered before with clustering, due to the high dimensionality of the data, a player's "nearest neighbors" would often have little to do with him in the way of actually meaningful performance statistics, or would often have few to none neighbors in a predetermined "radius". This made for wildly inconsistent results when it came to a predictive model.
+
+### Gradient Boosting Regressor:
+I tried several different regression models and found that ensembled decision tree based models such as Random Forest Regression and Gradient Boosting Regression consistently outperformed both linear models and neighbor based models. Gradient Boosting Regression proved to ultimately be the most consistent algorithm and usually outperformed the other models. The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model.   
+One thing that made the decision tree models so much more consistently effective than neighbors regressors is their independence from distance metrics. Their ability to handle unique situations and non-linearities in the data trends was also incredibly valuable.
+
+
+## Conclusions
+
+### Permutation Importance
 I calculated feature importances using the Random Forest Permutation Importance (RFPimp) module. The permutation importance of a feature is calculated as the change in model score that arises from randomly scrambling the values for that feature while holding all others the same.
 
-### Salary Features
+#### Important Salary Features
 * Total Points (1 year)
 * Time on Ice (TOI) (1 year total)
 * TOI / Game (3 year mean)
 * TOI / Game (1 year)
 * iCF (Player shot attempts - 1 year)
 
-### Length Features
+#### Important Length Features
 * Predicted Cap %
 * Player Age
 
-## Results:
+### Results:
 RMSE pick mean cap_pct: 2.9%
     translates to 2019 Cap Hit of: $2,407,000
 RMSE pick mean length: 1.9 years
@@ -125,5 +134,5 @@ RMSE for Gradient Boosted Model Total Value: $7,523,000
  * The instructors and my fellow classmates at Galvanize
 
 ## About the Author:  
-Colin Shanahan is a San Francisco based former mechanical engineer turned Data Scientist and a student at Galvanize's Data Science Immersive program. He is also a huge hockey fan.
-[LinkedIn](https://www.linkedin.com/in/c-shan)
+Colin Shanahan is a San Francisco based former mechanical engineer turned Data Scientist and a student at Galvanize's Data Science Immersive program. He is also a huge hockey fan.  
+You can reach him on [LinkedIn](https://www.linkedin.com/in/c-shan).
