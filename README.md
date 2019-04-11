@@ -129,17 +129,17 @@ This plot is similar to the one above, except the points represent contract leng
 After running my model on the test set for the data, I ended up with RMSE of 0.97% and 1.0 years respectively for salary and contract length. This converts to roughly $805,000 in 2019. Comparing this to the baseline model of selecting the mean contract every time, we find a *67% improvement on salary, and a 47% improvement on contract length*.  
 We can convert this to total value by multiplying salary and contract length to obtain a single value for *improvement of 58%* over the baseline.
 
-RMSE pick mean cap_pct: 2.9%  
-    translates to 2019 Cap Hit of: $2,407,000  
-RMSE pick mean length: 1.9 years  
+RMSE pick mean cap_pct: __2.9%__  
+    translates to 2019 Cap Hit of: __$2,407,000__  
+RMSE pick mean length: __1.9 years__  
 
-RMSE Cap_pct: 0.97% (**Improvement: 67%**)  
-    translates to 2019 Cap Hit of: $805,100  
-RMSE Length: 1.0 years (**Improvement: 47%**)  
+RMSE Cap_pct: __0.97%__ (__**Improvement: 67%**__)  
+    translates to 2019 Cap Hit of: __$805,100__  
+RMSE Length: __1.0 years__ (__**Improvement: 47%**__)  
 
-RMSE for predicting mean Total Value: $17,899,000  
-RMSE for Gradient Boosted Model Total Value: $7,523,000  
-**Improvement: 58.0%**  
+RMSE for predicting mean Total Value: __$17,899,000__
+RMSE for Gradient Boosted Model Total Value: __$7,523,000__  
+__**Improvement: 58.0%**__  
 
 
 As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results. I've displayed a few of the more prominent free agents in the following table, and the full results are viewable as a csv in the 'conc' folder.
