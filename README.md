@@ -50,10 +50,11 @@ Features and trends that stood out:
 
 
 ## Model:
-The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model.
+
 
 ### Selecting an Error Metric and a Baseline
-
+To evaluate my model I chose Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.
+RMSE =  \sqrt{\frac{1}{n} \ast   \sum (prediction - target)^{2}}
 
 ### kMeans Clustering:
 One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that
