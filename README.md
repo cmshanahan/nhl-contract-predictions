@@ -133,13 +133,13 @@ RMSE pick mean cap_pct: __2.9%__
     translates to 2019 Cap Hit of: __$2,407,000__  
 RMSE pick mean length: __1.9 years__  
 
-RMSE Cap_pct: __0.97%__ (__**Improvement: 67%**__)  
+RMSE Cap_pct: __0.97%__ (**Improvement: 67%**)  
     translates to 2019 Cap Hit of: __$805,100__  
-RMSE Length: __1.0 years__ (__**Improvement: 47%**__)  
+RMSE Length: __1.0 years__ (**Improvement: 47%**)  
 
 RMSE for predicting mean Total Value: __$17,899,000__
 RMSE for Gradient Boosted Model Total Value: __$7,523,000__  
-__**Improvement: 58.0%**__  
+**Improvement: 58.0%**  
 
 
 As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results. I've displayed a few of the more prominent free agents in the following table, and the full results are viewable as a csv in the 'conc' folder.
