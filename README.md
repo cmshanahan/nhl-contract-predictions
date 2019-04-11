@@ -54,11 +54,11 @@ Features and trends that stood out:
 
 ### Selecting an Error Metric and a Baseline
 To evaluate my model I chose Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
-<RMSE =  \sqrt{\frac{1}{n} \ast   \sum (prediction - target)^{2}}>
 
 ### kMeans Clustering:
 One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that
-Cluster plots here
+<img src="images/intuit_clusters.png" alt="drawing" width="600"/>
+<img src="images/pca_clusters.png" alt="drawing" width="600"/>
 
 ### Gradient Boosting Regressor:
 The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model. I tried several different regression models but ultimately found that Gradient Boosting provided the best and most consistent scores.
@@ -105,6 +105,8 @@ RMSE for predicting mean Total Value: $17,899,000
 RMSE for Gradient Boosted Model Total Value: $7,523,000
 **Improvement: 58.0%**
 
+<img src="images/free_agent_2019_preds.png" alt="drawing" width="600"/>
+
 ### Tools and Resources used:  
  - Python
  - sklearn  
@@ -121,3 +123,7 @@ RMSE for Gradient Boosted Model Total Value: $7,523,000
  * Thanks to PuckPedia for sharing their contracts database with me
  * Natural Stat Trick for having advanced stats data freely available for download
  * The instructors and my fellow classmates at Galvanize
+
+## About the Author:  
+Colin Shanahan is a San Francisco based former mechanical engineer turned Data Scientist and a student at Galvanize's Data Science Immersive program. He is also a huge hockey fan.
+[LinkedIn](https://www.linkedin.com/in/c-shan)
