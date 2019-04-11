@@ -1,7 +1,7 @@
 ## nhl-contract-predictions
 ### Predict NHL player contract terms (salary and length) from their in-game stats
 
-This project looks at predicting NHL player salary cap hits and length of contract.
+This project looks at predicting two targets, NHL player salary cap hits and length of contract.
 
 ### Table of Contents:
  * [Background](#Background)
@@ -28,17 +28,36 @@ I used Pandas rolling and aggregate functions to calculate average stats over th
 The stats data was then merged with the contracts data so that every row contained a player contract and that player's stats over the season prior to signing and aggregated over 3 years prior to signing.
 The raw data and the cleaned / featurized / merged data were then stored in SQL databases using a Postgres image on a Docker container.
 
+**<Boxplot here>**
+
 Here's a chart illustrating some survivorship bias in my data:
 <img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="600"/>  
 The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.
 
-Features that stood out:
- - Goals and Assists obviously had a significant positive correlation to salary
- - Penalties in general did not have a very visible effect, but major penalties had a strong negative effect (Skilled players tend to fight less)
- - Higher cap hit corresponds to higher cumulative stats (this makes sense because they play more)
+Features and trends that stood out:
+ - Goals and Assists had a clear and significant positive correlation to salary
+ - Penalties in general did not have a very visible effect, but major penalties had a strong negative effect (Skilled players tend to fight less).
+ - Higher cap hit corresponds to higher cumulative stats (this makes sense because they play more).
+ - Older players tend to sign shorter contracts, as do younger players with lower stats.
+ - Elite players who are younger or in their prime usually get signed to max length contracts. This makes sense as the team gets to lock up the player's talent long term, and the player gets financial security.
+ - The data distribution is clearly weighted towards many contracts of lower salary and shorter length, but averages are brought up by the best players being paid significantly more.
+
+ **<Histograms go here>**
+
+ **<Tableau charts or scatterplots>**
 
 ## Model:
 The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model.
+
+Baseline score.
+
+### kMeans Clustering:
+Talk about clustering...
+Cluster plots here
+
+### Gradient Boosting Regressor:
+The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model. I tried several different regression models but ultimately found that Gradient Boosting provided the best and most consistent scores.
+
 
 ### Modeling Choices:
 * Since the salary cap changes inconsistent amounts from year to year (it has always moved upwards, but in theory it could shrink) predictions are made against the contract's percentage of the salary cap at year of signing.
@@ -48,6 +67,21 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 * Entry Level Contracts were excluded from my model's training set as I am only predicting standard level contracts once a player has time played in the NHL.
 * Contracts signed before 2010 were excluded as Natural Stat Trick's data only goes back to 2007, thus there is no 3 year window.
 * On top of that I decided to exclude all contracts signed before the last Collective Bargaining Agreement in 2013 to eliminate bias from contracts signed under a different set of rules.
+
+## Important Features
+
+### Permutation importance
+
+### Salary Features
+* Total Points (1 year)
+* Time on Ice (TOI) (1 year total)
+* TOI / Game (3 year mean)
+* TOI / Game (1 year)
+* iCF (Player shot attempts - 1 year)
+
+### Length Features
+* Predicted Cap %
+* Player Age
 
 ## Output:
 RMSE pick mean cap_pct: 2.9%
