@@ -52,7 +52,7 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 Baseline score.
 
 ### kMeans Clustering:
-Talk about clustering...
+One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations.
 Cluster plots here
 
 ### Gradient Boosting Regressor:
@@ -71,6 +71,7 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 ## Important Features
 
 ### Permutation importance
+I calculating feature importances using the Random Forest Permutation Importance (RFPimp) module. The permutation importance of a feature is calculated as the change in model score that arises from randomly scrambling the values for that feature while holding all others the same. 
 
 ### Salary Features
 * Total Points (1 year)
@@ -85,27 +86,27 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 
 ## Output:
 RMSE pick mean cap_pct: 2.9%
-    translates to 2019 Cap Hit of: $2407000.0
+    translates to 2019 Cap Hit of: $2,407,000
 RMSE pick mean length: 1.9 years
 
-RMSE Cap_pct: 0.97% (Improvement: 67%)
-    translates to 2019 Cap Hit of: $805100.0
-RMSE Length: 1.0 years (Improvement: 47%)
+RMSE Cap_pct: 0.97% (**Improvement: 67%**)
+    translates to 2019 Cap Hit of: $805,100
+RMSE Length: 1.0 years (**Improvement: 47%**)
 
-RMSE for predicting mean Total Value: $17899000.0
-RMSE for Gradient Boosted Model Total Value: $7523000.0
-Improvement: 58.0%
+RMSE for predicting mean Total Value: $17,899,000
+RMSE for Gradient Boosted Model Total Value: $7,523,000
+**Improvement: 58.0%**
 
-### Tools used:  
- - Python  
+### Tools and Resources used:  
+ - Python
  - sklearn  
  - pandas  
  - matplotlib
  - seaborn
  - Tableau
  - SQL
- - PuckPedia
- - Natural Stat Trick
+ - PuckPedia (contract data)
+ - Natural Stat Trick (statistics data)
  - NHL API  
 
 ### Special Thanks:
