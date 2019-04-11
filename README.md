@@ -72,6 +72,12 @@ Features and trends that stood out:
 ### Error Metric and a Baseline
 To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
 
+The mean NHL contract is signed at 2.6% ($2,150,000/year assuming a 2019 cap of $83 million) of the salary cap and is 2 years long.
+
+RMSE pick mean cap %: 2.9%
+    translates to 2019 Cap Hit of: $2,407,000
+RMSE pick mean length: 1.9 years
+
 ### kMeans Clustering:
 One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that these inherent players groups could be separated and a more accurate model could be achieved by running separate linear models on each cluster independently.  
 I ultimately had to reject this hypothesis as I found no method of clustering the players that resulted in cleanly separable groups. Running independent models on these clusters did no better than running a global non-parametric model. In fact by further segmenting my already small dataset, the variance problem became even worse.  
@@ -105,6 +111,9 @@ I calculated feature importances using the Random Forest Permutation Importance 
 * Player Age
 
 ### Results:
+After running my model on the test set for the data, I ended up with RMSE of 0.97% and 1.0 years respectively for salary and contract length. This converts to roughly $805,000 in 2019. Comparing this to the baseline model of selecting the mean contract every time, we find a *67% improvement on salary, and a 47% improvement on contract length*.  
+We can convert this to total value by multiplying salary and contract length to obtain a single value for *improvement of 58%* over the baseline.
+
 RMSE pick mean cap_pct: 2.9%
     translates to 2019 Cap Hit of: $2,407,000
 RMSE pick mean length: 1.9 years
@@ -117,7 +126,13 @@ RMSE for predicting mean Total Value: $17,899,000
 RMSE for Gradient Boosted Model Total Value: $7,523,000
 **Improvement: 58.0%**
 
-<img src="images/free_agent_2019_preds.png" alt="drawing" width="500"/>
+
+As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results.
+
+<img src="images/free_agent_19_preds.png" alt="drawing" width="500"/>
+(*Full results available as a csv in the conc folder*)
+
+By eyeballing it, I might tweak a few of the numbers here and there, but none of the predictions are truly surprising to me. I think that part of it is a matter of recent trends or a few splashy contracts affecting our subjective perceptions, but not providing enough of a quantitative nudge to influence the machine learning model. We'll find out in July!
 
 ### Tools and Resources used:  
  - Python
