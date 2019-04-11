@@ -29,7 +29,7 @@ More data on the salary cap is available from [Wikipedia here](https://en.wikipe
 <img src="images/cap_wiki.png" alt="drawing" width="500"/>
 
 
-##Goal:
+## Goal:
 Develop a machine learning model to predict contract salaries and lengths for NHL free agents based on their in-game stats.
 
 
@@ -43,7 +43,7 @@ One major challenge in dealing with the data in this problem was the relatively 
 
 <img src="images/cap_length_box.png" alt="drawing" width="500"/>
 
-<img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="350"/>  
+<img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="450"/>  
 There's some natural survivorship bias in older contracts. The average percentage of salary cap value of contracts increases as you go farther back in time since my data only contains active contracts for the last 2 seasons. The only contracts still active from those older years are for higher tier players.
 
 Features and trends that stood out:
@@ -142,7 +142,7 @@ RMSE for Gradient Boosted Model Total Value: $7,523,000
 
 As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results. I've displayed a few of the more prominent free agents in the following table, and the full results are viewable as a csv in the conc folder.
 
-<img src="images/fa_preds.png" alt="drawing" width="650"/>  
+<img src="images/fa_preds.png" alt="drawing" width="550"/>  
 
 By eyeballing it, I might tweak a few of the numbers here and there, but none of the predictions are truly surprising to me. I think that part of it is a matter of recent trends or a few splashy contracts affecting our subjective perceptions, but not providing enough of a quantitative nudge to influence the machine learning model. We'll find out in July!
 
