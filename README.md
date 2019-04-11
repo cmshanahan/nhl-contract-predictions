@@ -55,32 +55,34 @@ There's some natural survivorship bias in older contracts. The average percentag
  - Elite players who are younger or in their prime usually get signed to max length contracts. This makes sense as the team gets to lock up the player's talent long term, and the player gets financial security.
  - The data distribution is clearly weighted towards many contracts of lower salary and shorter length, but averages are brought up by the best players being paid significantly more.
 
-<img src="images/sal_hist.png" alt="drawing" width="500"/><img src="images/len_hist.png" alt="drawing" width="500" style="float: right;"/>
+<img src="images/sal_hist.png" alt="drawing" width="500"/>
+<img src="images/len_hist.png" alt="drawing" width="500"/>
 
 
 ## Model:
 
 ### Modeling Choices:
-* Since the salary cap changes inconsistent amounts from year to year (it has always moved upwards, but in theory it could shrink) predictions are made against the contract's percentage of the salary cap at year of signing.
+* Since the salary cap changes inconsistent amounts from year to year (it has nearly always moved upwards, but in theory it could shrink) predictions are made against the contract's percentage of the salary cap at year of signing.
   - The cap hit in real dollars was then calculated by referencing the listed salary cap for that year on [wikipedia](https://en.wikipedia.org/wiki/NHL_salary_cap).
 * Stats were aggregated over a 3-year window because this is a student project and that was the available window for relative on-ice statistics from Natural Stat Trick without paying. While I could have aggregated cumulative stats over a larger window I chose not to for consistency.
 * In the cases where a player did not have 3 years of NHL stats before signing his contract, I chose to fill in aggregates with stats over the available time window.
 * Entry Level Contracts were excluded from my model's training set as I am only predicting standard level contracts once a player has time played in the NHL.
+* Goalie contracts were excluded as they have a completely different set of statistics from skaters.  
 * Contracts signed before 2010 were excluded as Natural Stat Trick's data only goes back to 2007, thus there is no 3 year window.
 * On top of that I decided to exclude all contracts signed before the last Collective Bargaining Agreement in 2013 to eliminate bias from contracts signed under a different set of rules.
 * My goal is to predict two targets, salary and contract length. However, sklearn's machine learning package supports predicting a single target. As such, I chose to predict the two targets sequentially, feeding the predicted salary into the model for contract length as an additional feature.  
 
 ### Error Metric and Baseline
-To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.    
+To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets: dollars and years.    
 
 The mean NHL contract is signed at 2.6% ($2,150,000/year assuming a 2019 cap of $83 million) of the salary cap and is 2 years long.  
 
 RMSE pick mean cap %: 2.9%  
-    translates to 2019 Cap Hit of: $2,407,000  
+    - translates to 2019 Cap Hit of: $2,407,000  
 RMSE pick mean length: 1.9 years  
 
 ### kMeans Clustering:
-One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that these inherent players groups could be separated and a more accurate model could be achieved by running separate linear models on each cluster independently.  
+One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that these inherent players groups could be separated and a more accurate global model could be achieved by running separate linear models on each cluster independently.  
 I ultimately had to reject this hypothesis as I found no method of clustering the players that resulted in cleanly separable groups. Running independent models on these clusters did no better than running a global non-parametric model. In fact by further segmenting my already small dataset, the variance problem became even worse.  
 Another factor reducing the effectiveness of clustering was the high dimensionality of the data, which often made computed distances end up being completely arbitrary. I tried selecting features that I thought would well-define player usage (such as Offensive Zone Start % and TOI/GP) with mediocre results. Objective dimensionality reduction using Principal Component Analysis (PCA) did not help either.
 
@@ -88,7 +90,7 @@ Another factor reducing the effectiveness of clustering was the high dimensional
 <img src="images/pca_clusters.png" alt="drawing" width="400"/>
 
 ### Nearest Neighbors Regressors:
-Nearest neighbors regressors were evaluated as another possible metric for evaluating salaries (k Nearest Neighbors and Radius Neighbors). In fact this was how I believed salaries were evaluated going into this process. However as encountered before with clustering, due to the high dimensionality of the data, a player's "nearest neighbors" would often have little to do with him in the way of actually meaningful performance statistics, or would often have few to none neighbors in a predetermined "radius". This made for wildly inconsistent results when it came to a predictive model.
+Nearest neighbors regressors were evaluated as another possible metric for evaluating salaries (k Nearest Neighbors and Radius Neighbors). In fact this was how I believed salaries were evaluated going into this process. However as encountered before with clustering, due to the high dimensionality of the data, a player's "nearest neighbors" would often have little to do with him in the way of actually meaningful performance statistics, or would often have few to no neighbors in a predetermined "radius". This made for wildly inconsistent results when it came to a predictive model.
 
 ### Gradient Boosting Regressor:
 I tried several different regression models and found that ensembled decision tree based models such as Random Forest Regression and Gradient Boosting Regression consistently outperformed both linear models and neighbor based models. Gradient Boosting Regression proved to ultimately be the most consistent algorithm and usually outperformed the other models. The cleaned and compiled data was run through sklearn's Gradient Boosting Regressor algorithm to generate a predictive model.   
@@ -107,7 +109,7 @@ I calculated feature importances using the Random Forest Permutation Importance 
 * TOI / Game (1 year)
 * iCF (Player total shot attempts - 1 year)  
 
-I've displayed here the 5 features that came out with the highest importance to the salary model. Intuitively, these should make sense, players that score more and play more are likely to make more money. While player position was a feature, it didn't appear here, which I found interesting, although it may be subtly encoded within the 3rd and 4th feature, TOI / Game as there is such a huge split between the positions.  I did not include injury history as a feature in my model, but cumulative TOI encodes some information about whether the player missed time due to injury. I found the inclusion of iCF shot attempts interesting as well in that there could be some growing consideration for advanced stats in salary decisions.  
+I've displayed here the 5 features that came out with the highest importance to the salary model. Intuitively, these should make sense, players that score more and play more are likely to make more money. While player position was a feature, it didn't appear here, which I found interesting. Although it may be subtly encoded within the 3rd and 4th features, TOI / Game, as there is such a huge split between the positions.  I did not include injury history as a feature in my model, but cumulative TOI encodes some information about whether the player missed time due to injury. I found the inclusion of iCF shot attempts interesting as well in that there could be some growing consideration for advanced stats in salary decisions.  
 In the plot below, TOI and Total Points are plotted against each other, where point size is the frequency of players being in that statistical area, and color represents the magnitude of their salary.  
 
 <img src="images/cap_ht_scat.png" alt="drawing" width="800"/>
@@ -116,8 +118,8 @@ In the plot below, TOI and Total Points are plotted against each other, where po
 * Predicted Cap %
 * Player Age
 
-There were other features fed into the length model, but these two were far and away the most important, which makes sense. One would think salary is normally a much larger sticking point for contracts than length.
-I found it even more interesting that even when given all of the same features as the salary model, the salary prediction turned out to be the single most important feature to split tree decisions on.
+There were other features fed into the length model, but these two were far and away the most important. This makes since, as one would think salary is normally a much larger sticking point for contracts than length.
+I found it even more interesting that even when given all of the same features as the salary model, the salary prediction turned out to be the single most important feature to split tree decisions on. I believe it serves as a sort of 'short cut' for the model to split on.
 As you can see below, older players tend to get shorter contracts, while younger players or those in their prime who have earned high salaries tend to get the longest contracts.  
 This plot is similar to the one above, except the points represent contract lengths and the axes are player age and salary.
 
@@ -127,20 +129,20 @@ This plot is similar to the one above, except the points represent contract leng
 After running my model on the test set for the data, I ended up with RMSE of 0.97% and 1.0 years respectively for salary and contract length. This converts to roughly $805,000 in 2019. Comparing this to the baseline model of selecting the mean contract every time, we find a *67% improvement on salary, and a 47% improvement on contract length*.  
 We can convert this to total value by multiplying salary and contract length to obtain a single value for *improvement of 58%* over the baseline.
 
-RMSE pick mean cap_pct: 2.9%
-    translates to 2019 Cap Hit of: $2,407,000
-RMSE pick mean length: 1.9 years
+RMSE pick mean cap_pct: 2.9%  
+    translates to 2019 Cap Hit of: $2,407,000  
+RMSE pick mean length: 1.9 years  
 
-RMSE Cap_pct: 0.97% (**Improvement: 67%**)
-    translates to 2019 Cap Hit of: $805,100
-RMSE Length: 1.0 years (**Improvement: 47%**)
+RMSE Cap_pct: 0.97% (**Improvement: 67%**)  
+    translates to 2019 Cap Hit of: $805,100  
+RMSE Length: 1.0 years (**Improvement: 47%**)  
 
-RMSE for predicting mean Total Value: $17,899,000
-RMSE for Gradient Boosted Model Total Value: $7,523,000
-**Improvement: 58.0%**
+RMSE for predicting mean Total Value: $17,899,000  
+RMSE for Gradient Boosted Model Total Value: $7,523,000  
+**Improvement: 58.0%**  
 
 
-As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results. I've displayed a few of the more prominent free agents in the following table, and the full results are viewable as a csv in the conc folder.
+As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results. I've displayed a few of the more prominent free agents in the following table, and the full results are viewable as a csv in the 'conc' folder.
 
 <img src="images/fa_preds.png" alt="drawing" width="550"/>  
 
