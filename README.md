@@ -7,9 +7,12 @@ This project looks at predicting two targets, NHL player salary cap hits and len
  * [Background](#Background)
  * [Data](#Data)
  * [Model](#the-model)
- * [Output](#output)
- * [Alternate paths](#Alternate-paths)
- * [Conclusion](#Conclusion)
+    - [Clustering](#clustering)
+    - [Gradient Boosting Regressor](#gradient-boosting-regressor)
+    - [Modeling Choices](#modeling-choices)
+    - [Important Features](#important-features)
+ * [Results](#results)
+ * [Conclusion](#conclusion)
     - [Tools used](#tools-used)
     - [Special Thanks](#special-thanks)
 
@@ -28,7 +31,7 @@ I used Pandas rolling and aggregate functions to calculate average stats over th
 The stats data was then merged with the contracts data so that every row contained a player contract and that player's stats over the season prior to signing and aggregated over 3 years prior to signing.
 The raw data and the cleaned / featurized / merged data were then stored in SQL databases using a Postgres image on a Docker container.
 
-**<Boxplot here>**
+<img src="images/cap_length_box.png" alt="drawing" width="600"/>
 
 Here's a chart illustrating some survivorship bias in my data:
 <img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="600"/>  
@@ -42,7 +45,8 @@ Features and trends that stood out:
  - Elite players who are younger or in their prime usually get signed to max length contracts. This makes sense as the team gets to lock up the player's talent long term, and the player gets financial security.
  - The data distribution is clearly weighted towards many contracts of lower salary and shorter length, but averages are brought up by the best players being paid significantly more.
 
- **<Histograms go here>**
+<img src="images/sal_hist.png" alt="drawing" width="600"/>
+<img src="images/len_hist.png" alt="drawing" width="600"/>
 
  **<Tableau charts or scatterplots>**
 
@@ -52,7 +56,7 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 Baseline score.
 
 ### kMeans Clustering:
-One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations.
+One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that
 Cluster plots here
 
 ### Gradient Boosting Regressor:
@@ -71,7 +75,7 @@ The cleaned and compiled data was run through sklearn's Gradient Boosting Regres
 ## Important Features
 
 ### Permutation importance
-I calculating feature importances using the Random Forest Permutation Importance (RFPimp) module. The permutation importance of a feature is calculated as the change in model score that arises from randomly scrambling the values for that feature while holding all others the same. 
+I calculated feature importances using the Random Forest Permutation Importance (RFPimp) module. The permutation importance of a feature is calculated as the change in model score that arises from randomly scrambling the values for that feature while holding all others the same.
 
 ### Salary Features
 * Total Points (1 year)
@@ -84,7 +88,7 @@ I calculating feature importances using the Random Forest Permutation Importance
 * Predicted Cap %
 * Player Age
 
-## Output:
+## Results:
 RMSE pick mean cap_pct: 2.9%
     translates to 2019 Cap Hit of: $2,407,000
 RMSE pick mean length: 1.9 years
