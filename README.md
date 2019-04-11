@@ -5,6 +5,7 @@ This project looks at predicting two targets, NHL player salary cap hits and len
 
 ### Table of Contents:
  * [Background](#Background)
+ * [Goal](#Goal)
  * [Data](#Data)
  * [Model](#model)
     - [Modeling Choices](#modeling-choices)
@@ -27,6 +28,9 @@ More data on the salary cap is available from [Wikipedia here](https://en.wikipe
 
 <img src="images/cap_wiki.png" alt="drawing" width="500"/>
 
+
+##Goal:
+Develop a machine learning model to predict contract salaries and lengths for NHL free agents based on their in-game stats.
 
 
 ## Data:
@@ -65,9 +69,7 @@ Features and trends that stood out:
 * Entry Level Contracts were excluded from my model's training set as I am only predicting standard level contracts once a player has time played in the NHL.
 * Contracts signed before 2010 were excluded as Natural Stat Trick's data only goes back to 2007, thus there is no 3 year window.
 * On top of that I decided to exclude all contracts signed before the last Collective Bargaining Agreement in 2013 to eliminate bias from contracts signed under a different set of rules.
-
-<img src="images/cap_ht_scat.png" alt="drawing" width="500"/>
-<img src="images/len_ht_scat.png" alt="drawing" width="500"/>
+* My goal is to predict two targets, salary and contract length. However, sklearn's machine learning package supports predicting a single target. As such, I chose to predict the two targets sequentially, feeding the predicted salary into the model for contract length as an additional feature.  
 
 ### Error Metric and a Baseline
 To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
@@ -94,23 +96,33 @@ I tried several different regression models and found that ensembled decision tr
 One thing that made the decision tree models so much more consistently effective than neighbors regressors is their independence from distance metrics. Their ability to handle unique situations and non-linearities in the data trends was also incredibly valuable.
 
 
-
-
 ## Conclusions
 
 ### Permutation Importance
 I calculated feature importances using the Random Forest Permutation Importance (RFPimp) module. The permutation importance of a feature is calculated as the change in model score that arises from randomly scrambling the values for that feature while holding all others the same.
 
 #### Important Salary Features
-* Total Points (1 year)
-* Time on Ice (TOI) (1 year total)
+* Total Points (Goals + Assists - 1 year)
+* Time on Ice (TOI) (1 year cumulative)
 * TOI / Game (3 year mean)
 * TOI / Game (1 year)
-* iCF (Player shot attempts - 1 year)
+* iCF (Player total shot attempts - 1 year)  
+
+I've displayed here the 5 features that came out with the highest importance to the salary model. Intuitively, these should make sense, players that score more and play more are likely to make more money. While player position was a feature, it didn't appear here, which I found interesting, although it may be subtly encoded within the 3rd and 4th feature, TOI / Game as there is such a huge split between the positions.  I did not include injury history as a feature in my model, but cumulative TOI encodes some information about whether the player missed time due to injury. I found the inclusion of iCF shot attempts interesting as well in that there could be some growing consideration for advanced stats in salary decisions.  
+In the plot below, TOI and Total Points are plotted against each other, where point size is the frequency of players being in that statistical area, and color represents the magnitude of their salary.  
+
+<img src="images/cap_ht_scat.png" alt="drawing" width="500"/>
 
 #### Important Length Features
 * Predicted Cap %
 * Player Age
+
+There were other features fed into the length model, but these two were far and away the most important, which makes sense. One would think salary is normally a much larger sticking point for contracts than length.
+I found it even more interesting that even when given all of the same features as the salary model, the salary prediction turned out to be the single most important feature to split tree decisions on.
+As you can see below, older players tend to get shorter contracts, while younger players or those in their prime who have earned high salaries tend to get the longest contracts.  
+This plot is similar to the one above, except the points represent contract lengths and the axes are player age and salary. 
+
+<img src="images/len_ht_scat.png" alt="drawing" width="500"/>
 
 ### Results:
 After running my model on the test set for the data, I ended up with RMSE of 0.97% and 1.0 years respectively for salary and contract length. This converts to roughly $805,000 in 2019. Comparing this to the baseline model of selecting the mean contract every time, we find a *67% improvement on salary, and a 47% improvement on contract length*.  
@@ -129,10 +141,9 @@ RMSE for Gradient Boosted Model Total Value: $7,523,000
 **Improvement: 58.0%**
 
 
-As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results.
+As a final step, I fed the upcoming crop of 2019 free agents into my model to see the results. I've displayed a few of the more prominent free agents in the following table, and the full results are viewable as a csv in the conc folder.
 
-<img src="images/fa_preds.png" alt="drawing" width="500"/>
-(*Full results available as a csv in the conc folder*)
+<img src="images/fa_preds.png" alt="drawing" width="500"/>  
 
 By eyeballing it, I might tweak a few of the numbers here and there, but none of the predictions are truly surprising to me. I think that part of it is a matter of recent trends or a few splashy contracts affecting our subjective perceptions, but not providing enough of a quantitative nudge to influence the machine learning model. We'll find out in July!
 
