@@ -6,14 +6,14 @@ This project looks at predicting two targets, NHL player salary cap hits and len
 ### Table of Contents:
  * [Background](#Background)
  * [Data](#Data)
- * [Model](#the-model)
+ * [Model](#model)
     - [Modeling Choices](#modeling-choices)
-    - [Error Metric and Baseline](#error-and-baseline)
-    - [Clustering](#clustering)
+    - [Error Metric and Baseline](#error-metric-and-baseline)
+    - [Clustering](#kmeans-clustering)
     - [Nearest Neighbors Regressors](#nearest-neighbors-regressors)
     - [Gradient Boosting Regressor](#gradient-boosting-regressor)
- * [Conclusion](#conclusion)
-    - [Important Features](#important-features)
+ * [Conclusions](#conclusions)
+    - [Important Features](#permutation-importance)
     - [Results](#results)
     - [Tools used](#tools-used)
     - [Special Thanks](#special-thanks)
@@ -25,6 +25,9 @@ One of the defining features of most modern sports leagues (including the NHL) i
 As such, managing a team’s contracts and salary cap space is extremely important for any team that wants to even pretend to be competitive. Most continually successful teams are very good at not overpaying their high-end talent and identifying key players that can be valuable without putting too big a dent in the team’s salary cap situation. Teams are always looking to get better for cheaper.
 More data on the salary cap is available from [Wikipedia here](https://en.wikipedia.org/wiki/NHL_salary_cap).
 
+<img src="images/cap_wiki.png" alt="drawing" width="500"/>
+
+
 
 ## Data:
 Contracts were obtained with permission from [PuckPedia.com](https://puckpedia.com/) and included every player under an active NHL contract in the 2017-2018 and 2016-2017 seasons. In all, I had ~1200 contracts to work with once I eliminated goalies, entry level players, and those who signed contracts under the previous collective bargaining agreement.
@@ -34,7 +37,7 @@ The stats data was then merged with the contracts data so that every row contain
 The raw data and the cleaned / featurized / merged data were then stored in SQL databases using a Postgres image on a Docker container.  
 One major challenge in dealing with the data in this problem was the relatively low sample size. This resulted in high variance models, making it difficult to evaluate the impact of individual changes.
 
-<img src="images/cap_length_box.png" alt="drawing" width="600"/>
+<img src="images/cap_length_box.png" alt="drawing" width="500"/>
 
 Here's a chart illustrating some survivorship bias in my data:
 <img src="images/Avg_cap_pct_over_time.png" alt="drawing" width="600"/>  
@@ -48,8 +51,8 @@ Features and trends that stood out:
  - Elite players who are younger or in their prime usually get signed to max length contracts. This makes sense as the team gets to lock up the player's talent long term, and the player gets financial security.
  - The data distribution is clearly weighted towards many contracts of lower salary and shorter length, but averages are brought up by the best players being paid significantly more.
 
-<img src="images/sal_hist.png" alt="drawing" width="600"/>
-<img src="images/len_hist.png" alt="drawing" width="600"/>
+<img src="images/sal_hist.png" alt="drawing" width="500"/>
+<img src="images/len_hist.png" alt="drawing" width="500"/>
 
 
 ## Model:
@@ -63,21 +66,21 @@ Features and trends that stood out:
 * Contracts signed before 2010 were excluded as Natural Stat Trick's data only goes back to 2007, thus there is no 3 year window.
 * On top of that I decided to exclude all contracts signed before the last Collective Bargaining Agreement in 2013 to eliminate bias from contracts signed under a different set of rules.
 
-<img src="images/cap_ht_scat.png" alt="drawing" width="600"/>
-<img src="images/len_ht_scat.png" alt="drawing" width="600"/>
+<img src="images/cap_ht_scat.png" alt="drawing" width="500"/>
+<img src="images/len_ht_scat.png" alt="drawing" width="500"/>
 
-### Selecting an Error Metric and a Baseline
-To evaluate my model I chose Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
+### Error Metric and a Baseline
+To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets, dollars and years.  
 
 ### kMeans Clustering:
 One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that these inherent players groups could be separated and a more accurate model could be achieved by running separate linear models on each cluster independently.  
 I ultimately had to reject this hypothesis as I found no method of clustering the players that resulted in cleanly separable groups. Running independent models on these clusters did no better than running a global non-parametric model. In fact by further segmenting my already small dataset, the variance problem became even worse.  
 Another factor reducing the effectiveness of clustering was the high dimensionality of the data, which often made computed distances end up being completely arbitrary. I tried selecting features that I thought would well-define player usage (such as Offensive Zone Start % and TOI/GP) with mediocre results. Objective dimensionality reduction using Principal Component Analysis (PCA) did not help either.
 
-<img src="images/intuit_clusters.png" alt="drawing" width="600"/>
-<img src="images/pca_clusters.png" alt="drawing" width="600"/>
+<img src="images/intuit_clusters.png" alt="drawing" width="500"/>
+<img src="images/pca_clusters.png" alt="drawing" width="500"/>
 
-### Nearest Neighbors Regressors
+### Nearest Neighbors Regressors:
 Nearest neighbors regressors were evaluated as another possible metric for evaluating salaries (k Nearest Neighbors and Radius Neighbors). In fact this was how I believed salaries were evaluated going into this process. However as encountered before with clustering, due to the high dimensionality of the data, a player's "nearest neighbors" would often have little to do with him in the way of actually meaningful performance statistics, or would often have few to none neighbors in a predetermined "radius". This made for wildly inconsistent results when it came to a predictive model.
 
 ### Gradient Boosting Regressor:
@@ -114,7 +117,7 @@ RMSE for predicting mean Total Value: $17,899,000
 RMSE for Gradient Boosted Model Total Value: $7,523,000
 **Improvement: 58.0%**
 
-<img src="images/free_agent_2019_preds.png" alt="drawing" width="600"/>
+<img src="images/free_agent_2019_preds.png" alt="drawing" width="500"/>
 
 ### Tools and Resources used:  
  - Python
