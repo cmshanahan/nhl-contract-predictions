@@ -35,7 +35,7 @@ Develop a machine learning model to predict contract salaries and lengths for NH
 
 ## Data:
 Contracts were obtained with permission from [PuckPedia.com](https://puckpedia.com/) and included every player under an active NHL contract in the 2017-2018 and 2016-2017 seasons. In all, I had ~1200 contracts to work with once I eliminated goalies, entry level players, and those who signed contracts under the previous collective bargaining agreement.
-Stats were downloaded in csv format from Natural Stat Trick.
+Stats were downloaded in CSV format from Natural Stat Trick.
 I used Pandas rolling and aggregate functions to calculate average stats over the prior 3-year span.
 The stats data was then merged with the contracts data so that every row contained a player contract and that player's stats over the season prior to signing and aggregated over 3 years prior to signing. After all of this, my data contained roughly 200 columns.
 The raw data and the cleaned / featurized / merged data were then stored in SQL databases using a Postgres image on a Docker container.  
@@ -70,7 +70,7 @@ There's some natural survivorship bias in older contracts. The average percentag
 * Goalie contracts were excluded as they have a completely different set of statistics from skaters.  
 * Contracts signed before 2010 were excluded as Natural Stat Trick's data only goes back to 2007, thus there is no 3 year window.
 * On top of that I decided to exclude all contracts signed before the last Collective Bargaining Agreement in 2013 to eliminate bias from contracts signed under a different set of rules.
-* My goal is to predict two targets, salary and contract length. However, sklearn's machine learning package supports predicting a single target. As such, I chose to predict the two targets sequentially, feeding the predicted salary into the model for contract length as an additional feature.  
+* My goal is to predict two targets, salary and contract length. However, sklearn's machine learning package only supports predicting a single target. As such, I chose to predict the two targets sequentially, feeding the predicted salary into the model for contract length as an additional feature.  
 
 ### Error Metric and Baseline
 To evaluate my model I selected Root Mean Squared Error (RMSE) due to its interpretability and applicability to regression problems. One main advantage of RMSE over some other error metrics is that it can be expressed in the same units as our targets: dollars and years.    
@@ -82,7 +82,7 @@ RMSE pick mean cap %: 2.9%
 RMSE pick mean length: 1.9 years  
 
 ### kMeans Clustering:
-One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that these inherent players groups could be separated and a more accurate global model could be achieved by running separate linear models on each cluster independently.  
+One notion I had going into this project was that there are different types of players who would have different stats valued differently when it comes to contract negotiations. I hypothesized that these inherent player groups could be separated and a more accurate global model could be achieved by running separate linear models on each cluster independently.  
 I ultimately had to reject this hypothesis as I found no method of clustering the players that resulted in cleanly separable groups. Running independent models on these clusters did no better than running a global non-parametric model. In fact by further segmenting my already small dataset, the variance problem became even worse.  
 Another factor reducing the effectiveness of clustering was the high dimensionality of the data, which often made computed distances end up being completely arbitrary. I tried selecting features that I thought would well-define player usage (such as Offensive Zone Start % and TOI/GP) with mediocre results. Objective dimensionality reduction using Principal Component Analysis (PCA) did not help either.
 
@@ -118,7 +118,7 @@ In the plot below, TOI and Total Points are plotted against each other, where po
 * Predicted Cap %
 * Player Age
 
-There were other features fed into the length model, but these two were far and away the most important. This makes since, as one would think salary is normally a much larger sticking point for contracts than length.
+There were other features fed into the length model, but these two were far and away the most important. This makes sense, as one would think salary is normally a much larger sticking point for contracts than length.
 I found it even more interesting that even when given all of the same features as the salary model, the salary prediction turned out to be the single most important feature to split tree decisions on. I believe it serves as a sort of 'short cut' for the model to split on.
 As you can see below, older players tend to get shorter contracts, while younger players or those in their prime who have earned high salaries tend to get the longest contracts.  
 This plot is similar to the one above, except the points represent contract lengths and the axes are player age and salary.
